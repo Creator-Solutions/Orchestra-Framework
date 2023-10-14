@@ -185,6 +185,7 @@ part, that will be the API 'accessor' or 'name', which means, a certain part of 
 <br/>
 The  
 <br />
+
 ```php
 '_controller'
 ```
@@ -193,8 +194,20 @@ par, is the name of the Controller we're access, like
 
 ```php
 AuthController.php
+```  
+<br/>
+
+The  
+<br/>
+
+```php
+'_callback'
 ```
 <br/>
+
+is the function that we want to execute when we call the specific api endpoint.  <br />
+ in simple terms, if we want to call the login callback of the auth route, our url would look something like this ```http:domain.com/auth/login```. 
+
 
 
 
