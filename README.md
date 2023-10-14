@@ -181,12 +181,12 @@ part, that will be the API 'accessor' or 'name', which means, a certain part of 
 <br/>
 ```php 
 ['_controller' => AuthController::class, '_callback' =>'login']
-```
+```  
 <br/>
-the  
+the    
 <br/>
-```
-_controller
+```php
+'_controller'
 ```
 
 
