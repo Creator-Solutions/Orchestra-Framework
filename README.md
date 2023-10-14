@@ -176,12 +176,11 @@ So the
 '/auth'
 ```
 <br />
-part, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward.  <br />
-after that we this part 
+part, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward, after that we call this part 
 <br />
 ```php 
 ['_controller' => AuthController::class, '_callback' =>'login']
-```
+```  
 <br />
 the  
 <br />
