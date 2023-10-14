@@ -176,30 +176,3 @@ So the
 '/auth'
 ```
 <br/>
-part, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward, after that we call this part 
-<br/>
-```php 
-['_controller' => AuthController::class, '_callback' =>'login']
-```  
-<br/>
-the  
-<br/>
-```
-_controller
-```
-part, is the name of the Controller we're access, like    
-<br/>
-```
-AuthController
-```
-the    
-<br/>
-```
-_callback
-```
-<br/>
-is the function that we want to execute when we call the specific api endpoint.  <br />
-
-So in simple terms, if we want to call the login callback of the auth route, our url would look something like this ```http:domain.com/auth/login```. 
-
-
