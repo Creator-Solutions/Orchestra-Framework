@@ -157,8 +157,19 @@ Unfortunately as of now we do not automatically generate this class with our fra
 
 Let's take a look at the constructor.  <br />
 
-We have this line of code ```php $this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);```. So let's break it down.  <br />
-```php $this->router->add()```, this is the easy part, we add a new object to our router array. Kids stuff. Now let's look at the format of the actual array object.  <br />
+We have this line of code 
+```php 
+$this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);
+```  
+<br />
+
+So let's break it down.  <br />
+```php
+$this->router->add()
+```  
+<br />
+
+this is the easy part, we add a new object to our router array. Kids stuff. Now let's look at the format of the actual array object.  <br />
 So the ```php '/auth'```, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward.  <br />
 after that we this part ```php ['_controller' => AuthController::class, '_callback' =>'login']```, the ```_controller``` part, is the name of the Controller we're access, like ```AuthController```, the ```_callback```, is the function that we want to execute when we call the specific api endpoint.  <br />
 
