@@ -8,8 +8,8 @@
  <img align="center" src="https://owenburns.co.za/Orchestra/content/ink&quil.svg"/>
 </p>
 
-<p align="self">
-  Self built practice project that transformed into an<br /> ever-growing production used codebase that jumpstarts any projects
+<p align="self" textAlign="center">
+  Self built practice project that transformed into an ever-growing production used codebase that jumpstarts any projects
 </p>
  
 ## About this project
