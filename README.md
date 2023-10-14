@@ -188,11 +188,12 @@ part, is the name of the Controller we're access, like
 ```
 AuthController
 ```
-the 
+the  <br /> 
 ```
 _callback
 ```
- s the function that we want to execute when we call the specific api endpoint.  <br />
+<br />
+is the function that we want to execute when we call the specific api endpoint.  <br />
 
 So in simple terms, if we want to call the login callback of the auth route, our url would look something like this ```http:domain.com/auth/login```. 
 
