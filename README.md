@@ -1,7 +1,7 @@
 <h1 align="center">
  Orchestra Framework
 </h1>
-<p>
+<p align="center">
  Author: Creator Solutions - Owen Burns
 </p> 
  
