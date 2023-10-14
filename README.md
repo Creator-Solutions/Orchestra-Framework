@@ -176,3 +176,9 @@ So the
 '/auth'
 ```
 <br/>
+
+part, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward, after that we call this part  
+<br/>
+
+
+
