@@ -184,7 +184,8 @@ the
 ```
 _controller
 ```
-part, is the name of the Controller we're access, like 
+part, is the name of the Controller we're access, like  
+<br />
 ```
 AuthController
 ```
