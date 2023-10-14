@@ -9,7 +9,8 @@
 </p>
 
 <p align="self">
-  Self built practice project that transformed into an ever-growing production used codebase that jumpstarts any projects
+  Self built practice project that transformed into an
+  ever-growing production used codebase that jumpstarts any projects
 </p>
  
 ## About this project
