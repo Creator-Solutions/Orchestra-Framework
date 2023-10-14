@@ -113,7 +113,9 @@ include_once(dirname(__DIR__).'/Controllers/AuthController.php');
 ```
 <br />
 After that we import the Router class from the framework.   
+
 <br />
+
 ```php
 use Orchestra\Routing\Router;
 ```
