@@ -4,6 +4,7 @@
 <p align="center">
  Author: Creator Solutions - Owen Burns
 </p> 
+![Orchestra](https://owenburns.co.za/Orchestra/content/ink&quil.svg)
  
 ### About this project
 This framework was built as a practice project to understand concepts of more famous frameworks such as Symfony, which inspired this project, and Laravel.
