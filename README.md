@@ -16,7 +16,7 @@ This framework was built as a practice project to understand concepts of more fa
 <br/><br/><br/>
 
 ## Using the framework
-Due to the nature of the project not being an actual package to install, the project can be cloned as a default project. The following git commands can be used to create a new project and create a new repo without affecting the current base repo of the framework itself:    
+Due to the nature of the project not being an actual package to install, the project can be cloned as a default project. The following git commands can be used to create a new project and create a new repo without affecting the current base repo of the framework itself:      
 <br/><br/>
 
 **Cloning the project**
