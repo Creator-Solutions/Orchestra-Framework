@@ -171,6 +171,7 @@ $this->router->add()
 
 this is the easy part, we add a new object to our router array. Kids stuff. Now let's look at the format of the actual array object.  <br />
 So the 
+<br />
 ```php
 '/auth'
 ```
@@ -181,11 +182,12 @@ after that we this part
 ```php 
 ['_controller' => AuthController::class, '_callback' =>'login']
 ```
-the  <br />
+the  
+<br />
 ```
 _controller
 ```
-part, is the name of the Controller we're access, like  
+part, is the name of the Controller we're access, like    
 <br />
 ```
 AuthController
