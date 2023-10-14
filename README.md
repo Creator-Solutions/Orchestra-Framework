@@ -2,9 +2,7 @@
  Orchestra Framework
 </h1>
 
-<h3 align="center">
- Custom built in-house framework. 
-</3>
+### Custom built in-house framework. 
  
 </br>
 
