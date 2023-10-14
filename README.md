@@ -189,8 +189,14 @@ The
 ```php
 '_controller'
 ```
+par, is the name of the Controller we're access, like  
 <br/>
-part.
+
+```php
+AuthController.php
+```
+<br/>
+
 
 
 
