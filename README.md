@@ -9,7 +9,7 @@
 </p>
 
 <p align="self">
-  Self built practice project that transformed into an
+  Self built practice project that transformed into an(`<br>`)
   ever-growing production used codebase that jumpstarts any projects
 </p>
  
