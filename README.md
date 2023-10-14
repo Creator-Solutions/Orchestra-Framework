@@ -2,7 +2,7 @@
  Orchestra Framework
 </h1>
 <p align="center">
- Author: Creator Solutions - Owen Burns
+ Author: Creator Solutions - Owen Burns 
 </p> 
 <p align="center">
  <img src="https://owenburns.co.za/Orchestra/content/ink&quil.svg"/>
