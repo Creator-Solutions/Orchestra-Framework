@@ -1,0 +1,18 @@
+{
+    "name": "aurora/aurora",
+    "description": "Aurora Framework in PHP",
+    "type": "library",
+    "license": "propietary",
+    "autoload": {
+        "psr-4": {
+            "Aurora\\Aurora\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Owen Burns",
+            "email": "owenburns39@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}
