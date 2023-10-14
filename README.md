@@ -70,8 +70,33 @@ git remote set-url origin new_repo_url
 **Step 7: Confirmed new repo is now origin**
 ```
 git remote -v
+```  
+
+<br/>
+
+## How to begin building your API
+Building the API is the easy part. Navigating the framework, that's another ball-game, especially if you don't know how it works. In this section I'll explain the only changes that you need to make.  
+
+<br/>
+
+### Creating the Routes file:
+If you take a look at the ```index.php``` file, you'll notice there is an import for ```core/config/routes.php```, but when you look in the config folder, there is no ```routes.php``` file. This is where you come in. Now before going ham on the routes.php file, there is some format you have to follow:  
+
+<br/>
+
+**Step 1: Setting up the routes file**
+First things first, we need to add a couple of imports:  
+
+<br/>
+
+- **Controllers:**
+We will get back to the controllers in a little bit, but for now, create a controller class for instance ```AuthController.php``` in the ```Controllers``` folder. For instance:
+```php
+<?php
+
+class AuthController{
+
+    //Logic goes here...
+}
+
 ```
-
-
-
-
