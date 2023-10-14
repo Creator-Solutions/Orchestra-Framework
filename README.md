@@ -89,7 +89,7 @@ First things first, we need to add a couple of imports:
 
 <br/>
 
-- **Controllers:**
+1 **Controllers:**
 We will get back to the controllers in a little bit, but for now, create a controller class for instance ```AuthController.php``` in the ```Controllers``` folder. For instance:
 ```php
 <?php
@@ -97,6 +97,69 @@ We will get back to the controllers in a little bit, but for now, create a contr
 class AuthController{
 
     //Logic goes here...
+
 }
+```
+
+1 **routes.php**:
+Now we have our controller class. Now it's time to create the routes file. This file is where we will be generating all of our routes that the application will process.   <br />
+First things first, we import our controller class we just made:
+```php
+
+<?php
+
+include_once(dirname(__DIR__).'/Controllers/AuthController.php');
 
 ```
+<br />
+After that we import the Router class from the framework.   
+<br />
+```php
+use Orchestra\Routing\Router;
+```
+<br />
+
+After we have all of our imports we create the class like follows:
+```php
+class RouteCollection {
+    
+    /**
+     * @var Router
+     */
+    private Router $router; 
+
+    /**
+     * @var array
+     */
+    private array $routes;
+
+    public function __construct()
+    {
+        $this->router = new Router();
+
+        $this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);
+    }
+
+    public function getRouteCollection():array{
+        $this->routes = $this->router->getAll();
+
+        return $this->routes;
+    }
+}
+```
+<br />
+
+Unfortunately as of now we do not automatically generate this class with our framework, but will defintely be in our next update. However, onward...  
+
+<br />
+
+Let's take a look at the constructor.  <br />
+
+We have this line of code ```php $this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);```. So let's break it down.  <br />
+```php $this->router->add()```, this is the easy part, we add a new object to our router array. Kids stuff. Now let's look at the format of the actual array object.  <br />
+So the ```php '/auth'```, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward.  <br />
+after that we this part ```php ['_controller' => AuthController::class, '_callback' =>'login']```, the ```_controller``` part, is the name of the Controller we're access, like ```AuthController```, the ```_callback```, is the function that we want to execute when we call the specific api endpoint.  <br />
+
+So in simple terms, if we want to call the login callback of the auth route, our url would look something like this ```http:domain.com/auth/login```. 
+
+
