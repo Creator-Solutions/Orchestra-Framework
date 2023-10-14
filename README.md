@@ -2,6 +2,5 @@
  Orchestra Framework
 </h1>
 
-<h4 align="center">
- Custom-built Organisation Framework. Easy to use framework to jumpstart backend.
-</h4>
+## Custom built in-house framework. 
+
