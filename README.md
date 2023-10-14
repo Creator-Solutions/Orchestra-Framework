@@ -170,8 +170,29 @@ $this->router->add()
 <br />
 
 this is the easy part, we add a new object to our router array. Kids stuff. Now let's look at the format of the actual array object.  <br />
-So the ```php '/auth'```, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward.  <br />
-after that we this part ```php ['_controller' => AuthController::class, '_callback' =>'login']```, the ```_controller``` part, is the name of the Controller we're access, like ```AuthController```, the ```_callback```, is the function that we want to execute when we call the specific api endpoint.  <br />
+So the 
+```php
+'/auth'
+```
+<br />
+part, that will be the API 'accessor' or 'name', which means, a certain part of the url for instance 'https:domain.com/auth/' would have the accessor. Pretty straight forward.  <br />
+after that we this part 
+```php 
+['_controller' => AuthController::class, '_callback' =>'login']
+```
+the 
+```
+_controller
+```
+part, is the name of the Controller we're access, like 
+```
+AuthController
+```
+the 
+```
+_callback
+```
+ s the function that we want to execute when we call the specific api endpoint.  <br />
 
 So in simple terms, if we want to call the login callback of the auth route, our url would look something like this ```http:domain.com/auth/login```. 
 
