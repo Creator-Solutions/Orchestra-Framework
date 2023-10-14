@@ -22,4 +22,4 @@ Due to the nature of the project not being an actual package to install, the pro
 ```
 git clone https://github.com/The-Founders-Studio/Orchestra-Framework.git 'project_name'
 ```
-Replace 'project_name' (quotes included), with the name of the project you wish to build.
+__Replace 'project_name' (quotes included), with the name of the project you wish to build.__
