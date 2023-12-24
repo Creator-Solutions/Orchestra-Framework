@@ -1,6 +1,6 @@
 <?php
 
-namespace Orchestra\Routing;
+namespace Orchestra\routing;
 
 /**
  * Class that handles Route Collection
