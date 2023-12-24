@@ -9,30 +9,27 @@ class FileHandler{
      */
     private string $rootProjectFolder;
 
-    public function getProjectRoot(): string{
-        // Get the directory of the current PHP script
-        $currentDirectory = __DIR__;
-
-        // Define the depth to go up in the directory structure to reach the root folder
-        $depthToRoot = 0;
-
-        // Specify the name of the root project folder
-        $rootFolderName = 'founders-vaporium';
-
-        // Keep moving up in the directory structure until you reach the root folder
-        while ($depthToRoot < 10) { // Limit the number of iterations for safety
-            if (basename($currentDirectory) === $rootFolderName) {
-                // Found the root project folder
-                $this->rootProjectFolder = $currentDirectory;
-                break;
-            }
-
-            // Move up one directory level
-            $currentDirectory = dirname($currentDirectory);
-            $depthToRoot++;
-        }
-
-        return $this->rootProjectFolder;
-    }
-
+   public function getProjectRoot(): string {
+      $current_dir = __DIR__;
+  
+      $depthToRoot = 0;
+  
+      // Specify the number of levels to go up
+      $levelsToRoot = 2;
+  
+      // Keep moving up in the directory structure until you reach the desired root depth
+      while ($depthToRoot < $levelsToRoot) {
+          // Move up one directory level
+          $current_dir = dirname($current_dir);
+          $depthToRoot++;
+      }
+  
+      // Set the root project folder
+      $this->rootProjectFolder = $current_dir;
+  
+      return $this->rootProjectFolder;
+   }
 }
+
+$handler = new FileHandler();
+echo $handler->getProjectRoot();
