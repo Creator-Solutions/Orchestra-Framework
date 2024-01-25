@@ -8,6 +8,8 @@
  <img src="https://owenburns.co.za/Orchestra/content/ink&quil.svg"/>
 </p>
 
+![GitHub repo size](https://img.shields.io/github/repo-size/creator-solutions/Orchestra-Framework)
+
 <p align="center">Self built practice project that transformed into an<br>ever-growing production used codebase that jumpstarts any projects</p>   
 <br/><br/><br/>
 
