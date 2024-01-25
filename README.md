@@ -12,7 +12,7 @@
  <img src="https://img.shields.io/github/repo-size/creator-solutions/Orchestra-Framework" />
 </p>
 <p align="center">
- <img alt="GitHub repo file count (file type)" src="https://img.shields.io/github/repo-size/creator-solutions/Orchestra-Framework">
+ <img alt="GitHub repo file count (file type)" src="https://img.shields.io/github/directory-file-count/creator-solutions/Orchestra-Framework">
 </p>
 
 <p align="center">Self built practice project that transformed into an<br>ever-growing production used codebase that jumpstarts any projects</p>   
