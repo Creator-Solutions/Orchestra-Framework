@@ -59,7 +59,6 @@ class Index{
     private array $routeConfigs;
 
     
-
     public function __construct(){
         $this->routeCollection = new RouteCollection();
         $this->routeCollections = $this->routeCollection->getRouteCollection();
