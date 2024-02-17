@@ -27,5 +27,5 @@ class Router{
 
     public function getAll():array{
         return $this->routes;
-    }    
+    }
 }
