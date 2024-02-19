@@ -32,4 +32,3 @@ class FileHandler{
 }
 
 $handler = new FileHandler();
-echo $handler->getProjectRoot();
