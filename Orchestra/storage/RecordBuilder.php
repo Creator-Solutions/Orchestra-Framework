@@ -3,19 +3,16 @@
 namespace Orchestra\storage;
 
 use Orchestra\storage\DatabaseHelper;
-
-
 use \PDO;
 use \Exception;
-use PDOStatement;
 
 /**
- * Record Builder class that construct SQL Queries
- * -> Initializes DB connection object directly from base class
+ * Main Class that handles SQL Calls
+ * -> Inits Connection Object Directly.
  * 
  * (c) @author 
  * 
- * @author Creator-Solutions -> Owen Burns
+ * @author founderstudios/owenburns
  */
 class RecordBuilder
 {
@@ -24,12 +21,18 @@ class RecordBuilder
    private $data;
    private $whereClause;
 
-   public function __construct(PDO $pdo, string $table)
+   public function __construct(PDO $pdo, string $table = "")
    {
       $this->pdo = $pdo;
       $this->table = $table;
       $this->data = [];
       $this->whereClause = '';
+   }
+
+   public function from(string $table)
+   {
+      $this->table = $table;
+      return $this;
    }
 
    public function set($column, $value)
@@ -48,8 +51,18 @@ class RecordBuilder
       return $this;
    }
 
+   private function clearData()
+   {
+      $this->data = [];
+      $this->whereClause = '';
+   }
+
    public function insert()
    {
+      if (empty($this->table)) {
+         throw new Exception("Table name not specified.");
+      }
+
       $columns = implode(', ', array_keys($this->data));
       $placeholders = implode(', ', array_fill(0, count($this->data), '?'));
 
@@ -57,11 +70,41 @@ class RecordBuilder
       $statement = $this->pdo->prepare($sql);
       $statement->execute(array_values($this->data));
 
+      $this->clearData();
+
       return $this->pdo->lastInsertId();
+   }
+
+   public function update()
+   {
+      if (empty($this->table)) {
+         throw new Exception("Table name not specified.");
+      }
+      if (empty($this->whereClause)) {
+         throw new Exception("WHERE clause not specified for update operation.");
+      }
+
+      $setClause = [];
+      foreach ($this->data as $column => $value) {
+         $setClause[] = "$column = ?";
+      }
+      $setClause = implode(', ', $setClause);
+
+      $sql = "UPDATE $this->table SET $setClause WHERE $this->whereClause";
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute(array_values($this->data));
+
+      $this->clearData();
+
+      return $statement->rowCount();
    }
 
    public function select($columns = ['*'])
    {
+      if (empty($this->table)) {
+         throw new Exception("Table name not specified.");
+      }
+
       $columns = implode(', ', $columns);
       $sql = "SELECT $columns FROM $this->table";
       if (!empty($this->whereClause)) {
@@ -69,6 +112,8 @@ class RecordBuilder
       }
       $statement = $this->pdo->prepare($sql);
       $statement->execute(array_values($this->data));
+
+      $this->clearData();
 
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
