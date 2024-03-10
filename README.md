@@ -119,5 +119,5 @@ $this->router->add('/auth', ['_controller' => AuthController::class, '_callback'
 Route::middleware('auth')->get('/login');
 ```
 
-<p>this new way of adding middlware resource can be done within our <span style="font-weight: bold;">api.php</span> file.
+<p>this new way of adding middlware resource can be done within our</p> **api.php** <p>file.</p>
 </p>
