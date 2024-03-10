@@ -119,5 +119,31 @@ $this->router->add('/auth', ['_controller' => AuthController::class, '_callback'
 Route::middleware('auth')->get('/login');
 ```
 
-<p>this new way of adding middlware resource can be done within our api.php file
+<p>this new way of adding middlware resource can be done within our api.php file. </p>
+<p>
+ Lets break some of the code down shall we:
+</p> 
+<br />
+<p>
+ This part of the code : 
+</p> 
+
+```php
+Route::middleware('auth')
+```
+
+<p>
+ Creates an element in a list, defined by a key based on the middleware resource you have provided. This allows us to create multiple resources, without having to worry about what endpoints are linked to them, as the endpoints will be added to a new list where the middleware resource would be the main key to retrieve them. You can even specify routes that have the same endpoint as long as they have different middleware resources pointing to them.
+</p>
+
+<p>
+ And then there is the second half of the code: 
+</p> 
+
+```php
+get('/login');
+```
+
+<p>
+ This part is what houses the method that adds the endpoint to the specific middleware resource you have provided. 
 </p>
