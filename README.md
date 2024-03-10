@@ -146,5 +146,5 @@ get('/login');
 ```
 
 <p>
- The <sub>get</sub> method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
+ The <sup>get</sup> method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
 </p>
