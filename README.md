@@ -102,7 +102,8 @@ During the building phase of the project, the way endpoints were setup was long 
  , it just doesn't look right. Therefore change were made
 </p>
 
-#### Defining the middleware
+### Defining the middleware 
+<br />
 <p>
  Previously middleware was defined like this:
 </p>
