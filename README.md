@@ -146,5 +146,5 @@ get('/login');
 ```
 
 <p>
- This part is what houses the method that adds the endpoint to the specific middleware resource you have provided. 
+ The <sub>get</sub> method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
 </p>
