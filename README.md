@@ -137,3 +137,23 @@ get('/login');
 ```
 
 The **get** method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
+
+### Defining the routes
+
+Linking routes to the controller methods, required the user to create a controller class. The controller class would then have the method that the user defined when creating the middleware resources, i.e. ```php
+some_code...'_callback' =>'login'])```. This feature has now gone under massive reconstruction to improve the quality of handling these resources. 
+
+After finalizing these changes, routes can now be defined by implemented the various methods provided by the ```Router``` class. 
+```php
+Router::post('/login', function (Request $req) {
+   $message = "This is a test request";
+
+   return new JsonResponse(
+      array(
+         'message' => $message
+      ),
+      Response::HTTP_OK
+   );
+});
+```
+
