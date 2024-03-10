@@ -99,5 +99,21 @@ During the building phase of the project, the way endpoints were setup was long 
 
 ```https://domain.com/auth/registerUser```
 <p>
- , it just doesn't look right.
+ , it just doesn't look right. Therefore change were made
+</p>
+
+#### Defining the middleware
+<p>
+ Previously middleware was defined like this:
+</p>
+
+```php $this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);```
+<p>
+ but now, we can define them like this :
+</p>
+
+```php Route::middleware('auth')->get('/login');```
+
+<p>
+ this new way of adding middlware resource can be done within our *api.php* file.
 </p>
