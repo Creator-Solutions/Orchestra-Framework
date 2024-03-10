@@ -86,3 +86,9 @@ git remote -v
 <p>
  It's no new learning curve that all RESTful API's require some form of setup in order to handle requests sent from the frontend. During the improvements stage of the project, various improvements have been made on how the project is setup to handle these requests.
 </p>
+
+<br />
+
+<p>
+ During the building phase of the project, the way endpoints were setup was long and stretch. The user had to define a middleware resource, something like ```auth```, depending on what that resource requires. and after defining the resource, the user would then have to link a specific controller, to a specific callback, which was a function in the controller. This could case some headaches, as the function's name was case sensitive, and you were very limited on what you could name your functions, as the url where the request was sent from, would need to match. In some cases your url would look like this ```https://domain.com/auth/registerUser```, it just doesn't look right.
+</p>
