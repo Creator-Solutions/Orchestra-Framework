@@ -157,3 +157,4 @@ Router::post('/login', function (Request $req) {
 });
 ```
 
+By passing ```php Request $req``` as a parameter, it also removes the requirement of having global class variables in order to retrieve request paremeters, headers and all sorts of values.
