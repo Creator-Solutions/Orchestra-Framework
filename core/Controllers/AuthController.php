@@ -1,116 +1,42 @@
 <?php
 
-use Orchestra\JsonResponse;
 use Orchestra\http\Request;
-use Orchestra\storage\DatabaseHelper;
-use Orchestra\security\JWT;
-use Orchestra\security\Session;
-
-use Orchestra\mailer\PHPMailer;
-use Orchestra\mailer\SMTP;
-use PHPMailer\PHPMailer\Exception;
+use Orchestra\JsonResponse;
+use Orchestra\Response;
+use Orchestra\routing\Router;
 
 /**
- * Authentication controller
- * Handles user authentication
+ * ------------------------
+ * Controller File Example
+ * ------------------------
  * 
- * (c) @author Owen Burns
- * 
- * @author Creator-Solutions Owen Burns
- * @author Founder-Studios Owen Burns
+ * This is an example file that a controller would look like.
+ * No longer requires classes in order to run API's. API's
+ * can now be defined by using the Router class as providing
+ * the endpoint with a callback
  */
-class AuthController extends JsonResponse
-{
 
-   /**
-    * Request Class Object
-    * @var Request
-    */
-   private Request $req;
+/**
+ * -----------------
+ * Example Post Request
+ * -----------------
+ * 
+ * Endpoints are registered to the specific callback defined within the post method.
+ * Middlewares dictate the callback that has to be executed if the middleware and endpoint
+ * match, without having to provide the specific controller that has to be linked to the 
+ * middleware value.
+ * 
+ * This solution allows for less setup work to be done and easier code to maintain as the only methods are already provided,
+ * you just provide the logic
+ * 
+ */
+Router::post('/login', function (Request $req) {
+   $message = "This is a test request";
 
-   /**
-    * @var Session
-    */
-   private Session $session;
-
-   /**
-    * @var array
-    */
-   private array $response;
-
-   /**
-    * @var array
-    */
-   private array $headers = array(
-      'Content-Type' => 'application/json',
+   return new JsonResponse(
+      array(
+         'message' => $message
+      ),
+      Response::HTTP_OK
    );
-
-   /**
-    * @var PDO
-    */
-   private ?PDO $conn;
-
-   /**
-    * Database Seeder class
-    * @var DatabaseHelper
-    */
-   private DatabaseHelper $dbHelper;
-
-   /**
-    * @var string
-    */
-   private string $SQL;
-
-   /**
-    * @var PDOStatement
-    */
-   private PDOStatement $stmt;
-
-   /**
-    * response row
-    */
-   private $row;
-
-   public array $jwtHeaders = array('alg' => 'HS256', 'typ' => 'JWT');
-
-   public function __construct()
-   {
-      /**
-       * Initiates Request class
-       */
-      $this->req = new Request();
-
-      /**
-       * Init session class
-       */
-      $this->session = new Session();
-
-      /**
-       * initializes db seeder          
-       */
-      $this->dbHelper = new DatabaseHelper();
-
-      /**
-       * Assign value to connection
-       */
-      $this->dbHelper::initMySQL();
-      $this->conn = $this->dbHelper::$conn;
-   }
-
-   public function login()
-   {
-      $session = $this->req->get('session');
-
-      if ($this->conn) {
-         $this->response = array(
-            'Status' => 'connected successfully'
-         );
-      } else {
-         $this->response = array(
-            'Status' => 'Not connected successfully'
-         );
-      }
-
-      return $this->json($this->response[0], 200, $this->headers);
-   }
-}
+});

@@ -2,7 +2,8 @@
 
 namespace Orchestra;
 
-class Response{
+class Response
+{
 
     public const HTTP_CONTINUE = 100;
     public const HTTP_SWITCHING_PROTOCOLS = 101;
@@ -77,7 +78,7 @@ class Response{
      * @var array
      */
     private array $headers;
-    
+
     /**
      * @var int
      */
@@ -156,41 +157,47 @@ class Response{
         511 => 'Network Authentication Required',                             // RFC6585
     ];
 
-    public function __construct(?string $content = '', int $status = 200, array $headers = []){
-        
+    public function __construct(mixed $content, int $status = 200, array $headers = [])
+    {
+
         $this->setContent($content);
         $this->setStatusCode($status);
     }
 
-    public function setContent(?string $content){
+    public function setContent(mixed $content)
+    {
         $this->content = $content;
     }
 
-    public function getContent(): array{
-        return $this->content;
+    public function getContent(): mixed
+    {
+        return json_encode($this->content);
     }
 
-    public function setStatusCode(int $code, string $text = ''){
-        $this ->statusCode = $code;
+    public function setStatusCode(int $code, string $text = '')
+    {
+        $this->statusCode = $code;
 
-        if ($this->isInvalid()){
+        if ($this->isInvalid()) {
             throw new \InvalidArgumentException(sprintf('The HTTP status code "%s" is not valid.', $code));
         }
 
-        if ($text === ''){
+        if ($text === '') {
             $this->statusText = self::$statusHeaders[$code] ?? 'Unkown Status';
 
             return $this;
-        }   
+        }
 
         $this->statusText = $text;
     }
 
-    public function getStatusCode(): int{
+    public function getStatusCode(): int
+    {
         return $this->statusCode;
     }
 
-    public function getStatusText(){
+    public function getStatusText()
+    {
         return $this->statusText;
     }
 
