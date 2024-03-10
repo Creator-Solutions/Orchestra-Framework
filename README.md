@@ -115,5 +115,5 @@ During the building phase of the project, the way endpoints were setup was long 
 ```php Route::middleware('auth')->get('/login');```
 
 <p>
- this new way of adding middlware resource can be done within our *api.php* file.
+ this new way of adding middlware resource can be done within our __api.php__ file.
 </p>
