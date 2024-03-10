@@ -1,109 +1,61 @@
 <?php
 
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Headers: *");
+use Orchestra\http\Request;
+use Orchestra\http\UrlMatcher;
+use Orchestra\routing\Route;
+use Orchestra\routing\Router;
 
-if (! defined('PHPNEXUS_VERSION')) {
+if (!defined('PHPNEXUS_VERSION')) {
     require_once 'autoload.php';
 }
 
-include_once(__DIR__ .'/core/config/routes.php');
-
-use Orchestra\http\UrlMatcher;
-use Orchestra\bandwidth\TokenBucket;
-use Orchestra\bandwidth\Rate;
-use Orchestra\bandwidth\BlockingConsumer;
-use Orchestra\bandwidth\storage\FileStorage;
-use Orchestra\bandwidth\storage\SessionStorage;
-use Orchestra\io\FileHandler;
+/**
+ * -------------------------
+ * API File
+ * -------------------------
+ * 
+ * Do not remove this import statement
+ * -> COULD HAVE DIRE CONSEQUENCES
+ * 
+ */
+include_once(__DIR__ . '/Orchestra/routing/api.php');
 
 /**
- * Main indexer file -> reads Url data
- * => points to correct controller::Action
+ * ----------------------
+ * Controller Imports
+ * ----------------------
  * 
- * (c) @author
- * 
- * @author Creator-Solutions Owen Burns
- * @author Founder-Studios Owen Burns
+ * Import controllers from this part of the file
  */
-class Index{
+include_once(__DIR__ . '/core/Controllers/AuthController.php');
 
-    /**
-     * @var RouteCollection
-     */
-    private RouteCollection $routeCollection;
+/**
+ * --------------------
+ * Main entry point
+ * --------------------
+ * 
+ * This is the main entry file for a project
+ * All requests are caught in this file, the request
+ * is then broken into pieces and the respective 
+ * endpoint is called linked to the middleware caught by the 
+ * URL
+ * 
+ * Do not make changes to logic below as the logic was carefully
+ * placed in order to maximize functionality and quality
+ */
+$urlMatcher = new UrlMatcher();
 
-    /**
-     * @var array
-     */
-    private array $routeCollections;
+$requestUri = $_SERVER['REQUEST_URI'];
+$requestMethod = $_SERVER['REQUEST_METHOD'];
 
-    /**
-     * @var array
-     */
-    private array $url;
+// Extract middleware and endpoint
+$uri = parse_url($requestUri, PHP_URL_PATH);
+$urlParts = explode('/', $uri);
+$middleware = $urlParts[3];
+$endpoint = $urlMatcher->serializeUrl($urlParts);
 
-    /**
-     * @var string
-     */
-    private string $uri;
+// Get routes and handle request
+$routes = Router::getRoutes();
+$response = Router::handle($requestMethod, $endpoint, new Request);
 
-    /**
-     * @var UrlMatcher
-     */
-    private UrlMatcher $matcher;
-
-    /**
-     * @var array
-     */
-    private array $routeConfigs;
-
-    
-    public function __construct(){
-        $this->routeCollection = new RouteCollection();
-        $this->routeCollections = $this->routeCollection->getRouteCollection();
-
-        $this->uri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        $this->url = explode( '/', $this->uri);
-
-        $this->matcher = new UrlMatcher($this->routeCollections);
-        $this->routeConfigs = $this->matcher->serialize('/'.$this->url[2], $this->url[3]);
-
-        session_start();
-    }
-
-    public function getRoutes(){
-       print_r($this->routeConfigs);
-    }
-
-    public function execute(){
-        $controllerName = $this->routeConfigs['_controller'];
-        $callback = $this->routeConfigs['_callback'];
-
-        $storage = new SessionStorage("Founders");
-        $rate = new Rate(10, Rate::MINUTE);
-        $bucket = new TokenBucket(10, $rate, $storage);
-        $bucket->bootstrap(10);
-
-        try{
-            if ($bucket->consume(1)){
-                $instance = new $controllerName();
-                $result = $instance->$callback();
-    
-                echo $result;
-            }else{
-                http_response_code(429);
-                echo json_encode(array(
-                    'state' => false,
-                    'message' => 'Rate limit exceeded'
-                ));
-            }        
-        }catch (Exception $e){
-            http_response_code(429);
-            echo $e;
-        }
-    }
-}
-
-$index = new Index();
-$index->execute();
+echo $response;

@@ -3,29 +3,47 @@
 namespace Orchestra\routing;
 
 /**
- * Class that handles Route Collection
+ * ------------------------------
+ * Router Class
+ * ------------------------------
  * 
- * (c) @author
+ * Each route defined using the internal methods from
+ * this class will be stored by the request method 
+ * as well as the /middleware/endpoint path. Once
+ * a request has been made to the endpoint a callback
+ * will be executed based on the parameters
  * 
- * @author Creator-Solutions Owen Burns
- * @author Founder-Studios Owen Burns
  */
-class Router{
+class Router
+{
 
-    /**
-     * @var array
-     */
-    protected array $routes = array();
+    protected static $routes = [];
 
-    public function add($alias, array $options){        
-        if (array_key_exists($alias, $this->routes)){
-            $this->routes[$alias][] = $options;
-        }else{
-            $this->routes[$alias] = array($options);  
+    public static function post(string $path, callable $callback)
+    {
+        self::$routes['POST'][$path] = $callback;
+    }
+
+    public static function get(string $path, callable $callback)
+    {
+        self::$routes['GET'][$path] = $callback;
+    }
+
+    public static function handle(string $method, string $uri, $request)
+    {
+        // Check if the method exists in the routes array
+        if (isset(self::$routes[$method][$uri])) {
+            // If yes, execute the callback function
+            $callback = self::$routes[$method][$uri];
+            return call_user_func($callback, $request);
+        } else {
+            // Handle route not found
+            echo "404 Not Found";
         }
     }
 
-    public function getAll():array{
-        return $this->routes;
+    public static function getRoutes()
+    {
+        return self::$routes;
     }
 }

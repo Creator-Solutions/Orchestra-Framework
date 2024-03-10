@@ -10,7 +10,8 @@ namespace Orchestra\http;
  * @author Creator-Solutions Owen Burns
  * @author Founder-Studios Owen Burns
  */
-class UrlMatcher{
+class UrlMatcher
+{
 
     /**
      * @var array
@@ -33,21 +34,23 @@ class UrlMatcher{
     private array $serializableObject;
 
 
-    public function __construct(array $routes)
+    public function __construct(array $routes = [])
     {
         $this->routes = $routes;
     }
 
-    public function setRoutes(array $routes){
+    public function setRoutes(array $routes)
+    {
         $this->routes = $routes;
     }
 
-    public function serialize($api, $route){        
+    public function serialize($api, $route)
+    {
         $routeConfig = $this->routes[$api];
 
-        for ($i = 0; $i < count($routeConfig); $i++){
+        for ($i = 0; $i < count($routeConfig); $i++) {
             $this->callback =  $routeConfig[$i]['_callback'];
-            if ($this->callback === $route){
+            if ($this->callback === $route) {
                 $this->controller = $routeConfig[$i]['_controller'];
                 $this->serializableObject = ['_controller' => $this->controller, '_callback' => $this->callback];
                 break;
@@ -55,5 +58,16 @@ class UrlMatcher{
         }
 
         return $this->serializableObject;
+    }
+
+    public function serializeUrl(array $url = []): string
+    {
+        if (count($url) === 4) {
+            return "/" . $url[3];
+        }
+
+        if (count($url) === 5) {
+            return "/" . $url[3] . "/" . $url[4];
+        }
     }
 }
