@@ -14,4 +14,3 @@ include 'Route.php';
  * through the /middleware/endpoint prefixes
  */
 Route::middleware('auth')->get('/login');
-Route::middleware('auth')->get('/register');
