@@ -91,6 +91,7 @@ class RecordBuilder
       $setClause = implode(', ', $setClause);
 
       $sql = "UPDATE $this->table SET $setClause WHERE $this->whereClause";
+      $sql = $this->removeSubstring($sql, ", 0 = ?");
       $statement = $this->pdo->prepare($sql);
       $statement->execute(array_values($this->data));
 
@@ -116,5 +117,15 @@ class RecordBuilder
       $this->clearData();
 
       return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
+
+   function removeSubstring(string $originalString, string $substringToRemove): string
+   {
+      $startIndex = strpos($originalString, $substringToRemove); // Find the starting index of the substring to remove
+      if ($startIndex !== false) { // Check if the substring to remove exists
+         $length = strlen($substringToRemove); // Get the length of the substring to remove
+         $originalString = substr_replace($originalString, "", $startIndex, $length); // Remove the substring
+      }
+      return $originalString;
    }
 }
