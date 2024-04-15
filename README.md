@@ -19,7 +19,9 @@
 <br/><br/><br/>
 
 ## About this project
-This framework was built as a practice project to understand concepts of more famous frameworks such as Symfony, which inspired this project, and Laravel. After building and improving the codebase, it was decided to build this project as a standalone framework to improve the management and creation of other Web API projects. As of October 2023, the project only supports POST request, and Web API requests. The framework, however, will only be supporting web api's and not any web based projects.   
+This framework initially began as a practice project aimed at delving into the core concepts of renowned frameworks like Symfony and Laravel, which served as inspiration. Over time, as we refined and expanded the codebase, we recognized the opportunity to develop it into a standalone framework for enhanced management and creation of various Web API projects.
+
+As of October 2023, the framework supports only POST requests and Web API requests. However, we're excited to announce that moving forward, we'll be extending our support beyond Web API development to encompass RESTful API development as well as server-side rendered templates. This expansion reflects our commitment to catering to a wider range of project needs and ensuring versatility in our framework's capabilities.
 <br/><br/>
 
 ## Using the framework
