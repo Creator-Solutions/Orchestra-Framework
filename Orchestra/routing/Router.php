@@ -2,6 +2,8 @@
 
 namespace Orchestra\routing;
 
+use Orchestra\templates\Template;
+
 /**
  * ------------------------------
  * Router Class
@@ -40,6 +42,11 @@ class Router
             // Handle route not found
             echo "404 Not Found";
         }
+    }
+
+    public static function view($template, $context){
+        $templateEngine = new Template($template);
+        $templateEngine->render($context);
     }
 
     public static function getRoutes()
