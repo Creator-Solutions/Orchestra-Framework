@@ -205,4 +205,24 @@ class Response
     {
         return $this->statusCode < 100 || $this->statusCode >= 600;
     }
+
+    public function view(string $templatePath)
+    {
+        // Check if the file exists
+        if (!file_exists($templatePath)) {
+            throw new \Exception("Template file not found: $templatePath");
+        }
+
+        // Read the contents of the HTML file
+        $html = file_get_contents($templatePath);
+
+        // Set the content to the HTML page
+        $this->setContent($html);
+
+        // Set appropriate headers for HTML content
+        $this->headers['Content-Type'] = 'text/html';
+
+        // Return the modified response object
+        return $this;
+    }
 }

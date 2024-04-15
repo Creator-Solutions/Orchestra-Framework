@@ -4,6 +4,7 @@ use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
+use Orchestra\templates\Template;
 
 /**
  * ------------------------
@@ -30,13 +31,20 @@ use Orchestra\routing\Router;
  * you just provide the logic
  * 
  */
-Router::post('/login', function (Request $req) {
-   $message = "This is a test request";
+Router::get('/login', function (Request $req) {
+   $message = "Login Page";
+   $another_message = "This is another message";
+   $items = ["1", "2", "3"];
+   $data = ['message' => $message, 'items' => $items, "another" => $another_message];
+   
+   $template = new Template();
+   return $template->view("login.html", $data);
+});
 
-   return new JsonResponse(
-      array(
-         'message' => $message
-      ),
-      Response::HTTP_OK
-   );
+Router::get('/register', function (Request $req){
+   $message = "Register Page";
+   
+   $template = new Template();
+
+   return $template->view("register.html", ['message' => $message]);
 });
