@@ -5,6 +5,8 @@ use Orchestra\http\UrlMatcher;
 use Orchestra\routing\Route;
 use Orchestra\routing\Router;
 
+use function PHPSTORM_META\type;
+
 if (!defined('PHPNEXUS_VERSION')) {
     require_once 'autoload.php';
 }
@@ -27,7 +29,7 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * 
  * Import controllers from this part of the file
  */
-include_once(__DIR__ . '/core/Controllers/AuthController.php');
+include_once(__DIR__ . '/core/Controllers/IndexController.php');
 
 /**
  * --------------------
@@ -55,7 +57,5 @@ $middleware = $urlParts[3];
 $endpoint = $urlMatcher->serializeUrl($urlParts);
 
 // Get routes and handle request
-$routes = Router::getRoutes();
 $response = Router::handle($requestMethod, $endpoint, new Request);
-
 echo $response;

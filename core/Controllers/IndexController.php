@@ -31,20 +31,31 @@ use Orchestra\templates\Template;
  * you just provide the logic
  * 
  */
-Router::get('/login', function (Request $req) {
-   $message = "Login Page";
-   $another_message = "This is another message";
-   $items = ["1", "2", "3"];
-   $data = ['message' => $message, 'items' => $items, "another" => $another_message];
-   
+
+Router::get('/page', function (Request $req) {
    $template = new Template();
-   return $template->view("login.html", $data);
+
+   $message = "Home Page";
+
+   return $template->view("shared/layout.html", ['message' => $message]);
 });
 
-Router::get('/register', function (Request $req){
-   $message = "Register Page";
-   
+/*
+Router::get('/login', function (Request $req) {
    $template = new Template();
 
-   return $template->view("register.html", ['message' => $message]);
+   $message = "Login Page";
+
+   return $template->view("shared/layout.html", ['message' => $message]);
+});*/
+
+Router::post('/login', function (Request $req) {
+   $message = "This is a test request";
+
+   return new JsonResponse(
+      array(
+         'message' => $message
+      ),
+      Response::HTTP_OK
+   );
 });

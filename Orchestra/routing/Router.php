@@ -3,6 +3,8 @@
 namespace Orchestra\routing;
 
 use Orchestra\templates\Template;
+use Orchestra\JsonResponse;
+use Orchestra\Response;
 
 /**
  * ------------------------------
@@ -18,7 +20,6 @@ use Orchestra\templates\Template;
  */
 class Router
 {
-
     protected static $routes = [];
 
     public static function post(string $path, callable $callback)
@@ -37,7 +38,19 @@ class Router
         if (isset(self::$routes[$method][$uri])) {
             // If yes, execute the callback function
             $callback = self::$routes[$method][$uri];
-            return call_user_func($callback, $request);
+            $response = call_user_func($callback, $request);
+
+            // Check the type of response
+            if ($response instanceof JsonResponse) {
+                // Send JSON response
+                $response->send();
+            } elseif (is_string($response)) {
+                // Send string response
+                echo $response;
+            } else {
+                // Handle other types of responses (e.g., templates)
+                // Implement logic as needed
+            }
         } else {
             // Handle route not found
             echo "404 Not Found";
