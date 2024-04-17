@@ -36,6 +36,8 @@ class JsonResponse extends Response
 
     public function __construct(mixed $data, int $response, $headers = [], bool $json = false)
     {
+        $this->status = $response;
+        $this->data = $data;
 
         if ($json && !\is_string($data) && !is_numeric($data) && !\is_callable([$data, '__toString'])) {
             throw new \TypeError(sprintf('"%s": If $json is set to true, argument $data must be a string or object implementing __toString(), "%s" given.', __METHOD__, get_debug_type($data)));
@@ -44,9 +46,16 @@ class JsonResponse extends Response
         if ($json && empty($data)) {
             throw new \InvalidArgumentException('"%s": If JSON is set to true an object must be provided');
         }
+    }
 
-        parent::__construct($data, $response);
-        echo json_encode($data);
+    public function send()
+    {
+        // Set headers
+        header('Content-Type: application/json');
+        http_response_code($this->status);
+
+        // Encode data as JSON and echo
+        echo json_encode($this->data);
     }
 
     public function build(mixed $data, int $code, bool $json)
@@ -69,7 +78,7 @@ class JsonResponse extends Response
     {
         $this->data = $json;
 
-        return $this;
+        return $this->data;
     }
 
     /**

@@ -33,7 +33,6 @@ class Template {
           throw new \Exception("Template file not found: $template");
       }
 
-      print_r($templateFilePath);
       
       // Read template file contents
       $templateContent = file_get_contents($templateFilePath);
@@ -46,13 +45,13 @@ class Template {
       return $templateContent;
   }
 
-  public function view($template, $data){
-      $templatePath = dirname(__DIR__) . "/../core/Templates/$template";
-
+  public function view($template, $data = []){
+      $templatePath = dirname(__DIR__) . "/../core/templates/$template";
       if (!file_exists($templatePath)) {
          throw new \Exception("Template file not found: $template");
      }
 
+     
      $templateContent = file_get_contents($templatePath);
       
       
