@@ -1,6 +1,6 @@
 {
-    "name": "aurora/aurora",
-    "description": "Aurora Framework in PHP",
+    "name": "orchestra/orchestra",
+    "description": "Orchestra Framework in PHP",
     "type": "library",
     "license": "propietary",
     "autoload": {

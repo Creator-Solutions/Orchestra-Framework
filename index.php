@@ -5,8 +5,6 @@ use Orchestra\http\UrlMatcher;
 use Orchestra\routing\Route;
 use Orchestra\routing\Router;
 
-use function PHPSTORM_META\type;
-
 if (!defined('PHPNEXUS_VERSION')) {
     require_once 'autoload.php';
 }
