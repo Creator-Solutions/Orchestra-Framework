@@ -6,6 +6,14 @@ use Orchestra\templates\Template;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 
+use Orchestra\http\UrlMatcher;
+use Orchestra\bandwidth\TokenBucket;
+use Orchestra\bandwidth\Rate;
+use Orchestra\bandwidth\BlockingConsumer;
+use Orchestra\bandwidth\storage\FileStorage;
+use Orchestra\bandwidth\storage\SessionStorage;
+use Orchestra\io\FileHandler;
+
 /**
  * ------------------------------
  * Router Class
@@ -32,10 +40,38 @@ class Router
         self::$routes['GET'][$path] = $callback;
     }
 
+    protected static function applyRateLimit(string $uri)
+    {
+        // Initialize the storage, rate, and token bucket
+        $storage = new SessionStorage("Founders");
+        $rate = new Rate(10, Rate::MINUTE);
+        $bucket = new TokenBucket(10, $rate, $storage);
+        $bucket->bootstrap(10);
+
+        try{
+            // Consume tokens from the bucket
+            if (!$bucket->consume(1)) {
+                // Rate limit exceeded
+                http_response_code(429);
+                echo json_encode([
+                    'state' => false,
+                    'message' => 'Rate limit exceeded'
+                ]);
+                exit(); // Stop further execution
+            }
+        }catch (\Exception $e){
+            echo $e;
+        }
+       
+    }
+
     public static function handle(string $method, string $uri, $request)
     {
         // Check if the method exists in the routes array
         if (isset(self::$routes[$method][$uri])) {
+            // Apply rate limit
+            self::applyRateLimit($uri);
+
             // If yes, execute the callback function
             $callback = self::$routes[$method][$uri];
             $response = call_user_func($callback, $request);

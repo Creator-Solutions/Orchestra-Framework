@@ -1,10 +1,15 @@
 <?php
 
+namespace core\Controllers;
+
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 use Orchestra\templates\Template;
+
+use Orchestra\config\OrchidConfig;
+use Orchestra\logs\Logger;
 
 /**
  * ------------------------
@@ -32,6 +37,11 @@ use Orchestra\templates\Template;
  * 
  */
 
+$orchidConfig = new OrchidConfig();
+$config = $orchidConfig->parse();
+
+$logger = new Logger();
+
 Router::get('/page', function (Request $req) {
    $template = new Template();
 
@@ -40,14 +50,30 @@ Router::get('/page', function (Request $req) {
    return $template->view("shared/layout.html", ['message' => $message]);
 });
 
-/*
-Router::get('/login', function (Request $req) {
-   $template = new Template();
 
-   $message = "Login Page";
+Router::get('/login', function (Request $req) use ($config, $logger) {
+   $template = new Template();  
 
-   return $template->view("shared/layout.html", ['message' => $message]);
-});*/
+   $message = "Home Page";
+   $var = "Variable";
+   $logFile = $config['logs'];
+
+   $logger->set_log_directory($logFile);
+   $logger->create_log_folder();
+
+   $logger->write($req->get_url(), "unable to identify client");
+
+   return $template->view("shared/layout.html", ['message' => $message, 'var' => $logFile]);
+});
+
+Router::get('/view', function (Request $req) {
+   $template = new Template();  
+   
+   $message = "Home Page";
+   $var = "Variable";
+
+   return $template->view("shared/layout.html", ['message' => $message, 'var' => $var]);
+});
 
 Router::post('/login', function (Request $req) {
    $message = "This is a test request";

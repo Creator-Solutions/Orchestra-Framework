@@ -1,0 +1,10 @@
+controllers:
+  resource:
+    path: ../Controllers/
+    namespace: core\Controller
+  type: attribute
+
+templates:
+  resource:
+    path: ../Templates/
+    namespace: core\Templates

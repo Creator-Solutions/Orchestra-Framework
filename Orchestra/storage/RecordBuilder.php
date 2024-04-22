@@ -3,6 +3,7 @@
 namespace Orchestra\storage;
 
 use Orchestra\storage\DatabaseHelper;
+
 use \PDO;
 use \Exception;
 
@@ -14,19 +15,38 @@ use \Exception;
  * 
  * @author founderstudios/owenburns
  */
-class RecordBuilder
+class RecordBuilder extends DatabaseHelper
 {
    private $pdo;
    private $table;
    private $data;
    private $whereClause;
 
-   public function __construct(PDO $pdo, string $table = "")
+
+   public function __construct(string $table = "")
    {
-      $this->pdo = $pdo;
+      $this->pdo = $this->getConnectionConfig();
       $this->table = $table;
       $this->data = [];
       $this->whereClause = '';
+   }
+
+   public function getConnectionConfig(): PDO{
+      $services = new Service();
+
+      $config = $services->parseConfig();
+      switch ($config['database']){
+         case "MySQL":
+            $this->initMySQL();
+            break;
+         case "PostgreSQL":
+            $this->initPG();
+            break;
+         default:
+            $this->initMySQL();
+      }
+
+      return self::$conn;
    }
 
    public function from(string $table)
@@ -85,20 +105,27 @@ class RecordBuilder
       }
 
       $setClause = [];
+      $values = [];
       foreach ($this->data as $column => $value) {
+         // Skip if the value is 0 or null
+         if ($value === 0 || $value === null) {
+            continue;
+         }
          $setClause[] = "$column = ?";
+         $values[] = $value;
       }
       $setClause = implode(', ', $setClause);
 
       $sql = "UPDATE $this->table SET $setClause WHERE $this->whereClause";
       $sql = $this->removeSubstring($sql, ", 0 = ?");
       $statement = $this->pdo->prepare($sql);
-      $statement->execute(array_values($this->data));
+      $statement->execute($values);
 
       $this->clearData();
 
       return $statement->rowCount();
    }
+
 
    public function select($columns = ['*'])
    {

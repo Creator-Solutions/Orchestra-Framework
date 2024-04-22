@@ -3,6 +3,7 @@
 define('PHPNEXUS_VERSION', '0.0.1');
 
 $classmap = [
+    'core' => __DIR__ . '/core/',
     'Orchestra' => __DIR__ . '/Orchestra/',
 ];
 
@@ -25,3 +26,5 @@ spl_autoload_register(function(string $classname) use ($classmap) {
 
     require_once $file;
 });
+
+

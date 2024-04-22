@@ -58,4 +58,8 @@ class Request
             return $headers[$key];
         }
     }
+
+    public function get_url(){
+        return $_SERVER['REQUEST_URI'];
+    }
 }

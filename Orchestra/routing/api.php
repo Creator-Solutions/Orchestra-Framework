@@ -16,4 +16,5 @@ include 'Route.php';
 Route::middleware('home')->get('/page');
 
 Route::middleware('auth')->get('/login');
+Route::middleware('products')->get('/view');
 Route::middleware('auth')->get('/register');
