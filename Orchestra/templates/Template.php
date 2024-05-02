@@ -20,15 +20,13 @@ namespace Orchestra\templates;
  */
 class Template { 
 
-   protected $basePath;
-
-   public function __construct($basePath = ""){
-      $this->basePath = $basePath;
-   }
+   protected $templatePath;
 
    public function render($template, $data = []) {
-      $templateFilePath = $this->basePath . '/' . $template;
+      $templateFilePath = $this->templatePath . '/' . $template;
+
       
+
       if (!file_exists($templateFilePath)) {
           throw new \Exception("Template file not found: $template");
       }
@@ -46,14 +44,13 @@ class Template {
   }
 
   public function view($template, $data = []){
-      $templatePath = dirname(__DIR__) . "/../core/templates/$template";
-      if (!file_exists($templatePath)) {
+      $this->templatePath = dirname(__DIR__) . "/../core/Templates/$template";
+      if (!file_exists($this->templatePath)) {
          throw new \Exception("Template file not found: $template");
      }
 
      
-     $templateContent = file_get_contents($templatePath);
-      
+     $templateContent = file_get_contents($this->templatePath);
       
       // Replace placeholders with data
       $templateContent = $this->parseTemplate($templateContent, $data);
@@ -88,5 +85,7 @@ class Template {
       return $template;
    }
 
-
+   public function get_template_path(){
+      return $this->templatePath;
+   }
 }

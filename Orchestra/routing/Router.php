@@ -4,15 +4,9 @@ namespace Orchestra\routing;
 
 use Orchestra\templates\Template;
 use Orchestra\JsonResponse;
-use Orchestra\Response;
-
-use Orchestra\http\UrlMatcher;
 use Orchestra\bandwidth\TokenBucket;
 use Orchestra\bandwidth\Rate;
-use Orchestra\bandwidth\BlockingConsumer;
-use Orchestra\bandwidth\storage\FileStorage;
 use Orchestra\bandwidth\storage\SessionStorage;
-use Orchestra\io\FileHandler;
 
 /**
  * ------------------------------
