@@ -13,48 +13,56 @@ use Orchestra\io\FileHandler;
  * Handles logging information and errors to the log
  * file provided in the orchid-config file
  */
-class Logger extends FileHandler{
-   private $logDIR;
-   private $logFile;
+abstract class Logger extends FileHandler
+{
+   private static $logDIR;
+   private static $logFile;
 
-   public function set_log_directory($path){
-      $this->logDIR = $path;
+   public static function set_log_directory($path)
+   {
+      self::$logDIR = $path;
    }
 
-   public function create_log_folder(){
-      $log_folder = $this->getProjectRoot() . $this->logDIR;
+   public static function create_log_folder()
+   {
+      $log_folder = (new FileHandler())->getProjectRoot() . self::$logDIR;
 
-      if (!is_dir($log_folder)){
-         if (!mkdir($log_folder, 0777, true)){
+      if (!is_dir($log_folder)) {
+         if (!mkdir($log_folder, 0777, true)) {
             throw new Exception("Could not create log directory");
          }
       }
 
-      $this->logFile = $log_folder . 'error.log';
-      if (!file_exists($this->logFile)){
-         if (!touch($this->logFile)){
+      self::$logFile = $log_folder . 'error.log';
+      if (!file_exists(self::$logFile)) {
+         if (!touch(self::$logFile)) {
             throw new Exception("Could not create log file");
          }
       }
    }
 
-   public function write($endpoint, $message){
-          // Get the current date and time
-    $timestamp = date('Y-m-d H:i:s');
+   public static function get_log_dir(): string
+   {
+      return self::getProjectRoot() . self::$logFile  . 'error.log';
+   }
 
-    $callingScript = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0]['file'];
+   /**
+    * Convenience function that handles outputting
+    * data to a log file for debugging
+    */
+   public static function write($message, $endpoint = "",)
+   {
+      $timestamp = date('Y-m-d H:i:s');
 
-    $formattedLogMessage = "[$timestamp]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
+      $callingScript = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0]['file'];
 
-    $result = file_put_contents($this->logFile, $formattedLogMessage, FILE_APPEND);
+      $formattedLogMessage = "[$timestamp]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
 
-    // Check if the write operation was successful
-    if ($result === false) {
-        // Failed to write to log file
-        return false;
-    }
+      $result = file_put_contents(self::$logFile, $formattedLogMessage, FILE_APPEND);
+      if ($result === false) {
+         return false;
+      }
 
-    // Successfully wrote to log file
-    return true;
+      return true;
    }
 }

@@ -13,8 +13,7 @@ include 'Route.php';
  * will be loaded by then RouteProvider and all of them will be accessible
  * through the /middleware/endpoint prefixes
  */
-Route::middleware('home')->get('/page');
+Route::middleware('home')->get('/');
 
 Route::middleware('auth')->get('/login');
-Route::middleware('products')->get('/view');
 Route::middleware('auth')->get('/register');
