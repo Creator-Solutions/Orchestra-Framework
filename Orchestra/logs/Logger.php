@@ -50,13 +50,13 @@ abstract class Logger extends FileHandler
     * Convenience function that handles outputting
     * data to a log file for debugging
     */
-   public static function write($message, $endpoint = "",)
+   public static function write($message, $endpoint = "", string $logtype)
    {
       $timestamp = date('Y-m-d H:i:s');
 
       $callingScript = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1)[0]['file'];
 
-      $formattedLogMessage = "[$timestamp]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
+      $formattedLogMessage = "[$timestamp $logtype]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
 
       $result = file_put_contents(self::$logFile, $formattedLogMessage, FILE_APPEND);
       if ($result === false) {
