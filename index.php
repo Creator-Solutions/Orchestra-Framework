@@ -51,9 +51,9 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 // Extract middleware and endpoint
 $uri = parse_url($requestUri, PHP_URL_PATH);
 $urlParts = explode('/', $uri);
-$middleware = $urlParts[3];
+$middleware = $urlParts[2];
 $endpoint = $urlMatcher->serializeUrl($urlParts);
 
 // Get routes and handle request
-$response = Router::handle($requestMethod, $endpoint, new Request);
+$response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
 echo $response;

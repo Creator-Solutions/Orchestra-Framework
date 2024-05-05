@@ -18,9 +18,9 @@ use \InvalidArgumentException;
 
 class Route
 {
-   protected static $middlewares = [];
-   protected static $middlewareMap = [];
-   protected static $alias;
+   public static $middlewares = [];
+   public static $middlewareMap = [];
+   public static $alias;
 
    public static function middleware(string $alias): self
    {

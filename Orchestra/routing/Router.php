@@ -4,9 +4,15 @@ namespace Orchestra\routing;
 
 use Orchestra\templates\Template;
 use Orchestra\JsonResponse;
+use Orchestra\Response;
+
+use Orchestra\http\UrlMatcher;
 use Orchestra\bandwidth\TokenBucket;
 use Orchestra\bandwidth\Rate;
+use Orchestra\bandwidth\BlockingConsumer;
+use Orchestra\bandwidth\storage\FileStorage;
 use Orchestra\bandwidth\storage\SessionStorage;
+use Orchestra\io\FileHandler;
 
 /**
  * ------------------------------
@@ -22,6 +28,7 @@ use Orchestra\bandwidth\storage\SessionStorage;
  */
 class Router
 {
+
     protected static $routes = [];
 
     public static function post(string $path, callable $callback)
@@ -42,7 +49,7 @@ class Router
         $bucket = new TokenBucket(10, $rate, $storage);
         $bucket->bootstrap(10);
 
-        try{
+        try {
             // Consume tokens from the bucket
             if (!$bucket->consume(1)) {
                 // Rate limit exceeded
@@ -53,43 +60,51 @@ class Router
                 ]);
                 exit(); // Stop further execution
             }
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             echo $e;
         }
-       
     }
 
-    public static function handle(string $method, string $uri, $request)
+    public static function handle(string $method, string $middleware, string $uri, $request)
     {
-        // Check if the method exists in the routes array
-        if (isset(self::$routes[$method][$uri])) {
-            // Apply rate limit
-            self::applyRateLimit($uri);
+        // Check if middleware exists
+        if (isset(Route::$middlewares[$middleware])) {
+            // Creates an array of the endpoints associated with the middleware
+            $middlewares = Route::$middlewares[$middleware];
 
-            // If yes, execute the callback function
-            $callback = self::$routes[$method][$uri];
-            $response = call_user_func($callback, $request);
+            // Flag to check if any middleware endpoint matches the requested URI
+            $endpointMatched = false;
 
-            // Check the type of response
-            if ($response instanceof JsonResponse) {
-                // Send JSON response
-                $response->send();
-            } elseif (is_string($response)) {
-                // Send string response
-                echo $response;
-            } else {
-                // Handle other types of responses (e.g., templates)
-                // Implement logic as needed
+            // Loop through the endpoints assigned to the current middleware
+            foreach ($middlewares as $middlewareEndpoint) {
+                // Check if the current middleware endpoint matches the requested URI
+                if ($middlewareEndpoint['endpoint'] === $uri) {
+                    // Set flag to true as at least one middleware endpoint matches
+                    $endpointMatched = true;
+
+                    // Execute the callback function associated with the requested URI
+                    $callback = self::$routes[$method][$uri];
+                    $response = call_user_func($callback, $request);
+
+                    // Check the type of response
+                    if ($response instanceof JsonResponse) {
+                        // Send JSON response
+                        $response->send();
+                    } elseif (is_string($response)) {
+                        // Send string response
+                        echo $response;
+                    }
+
+                    // Exit the loop as we found a matching endpoint
+                    break;
+                }
             }
-        } else {
-            // Handle route not found
-            echo "404 Not Found";
-        }
-    }
 
-    public static function view($template, $context){
-        $templateEngine = new Template($template);
-        $templateEngine->render($context);
+            // If none of the middleware endpoints match, return a 404 response
+            if (!$endpointMatched) {
+                echo "404 Not Found";
+            }
+        }
     }
 
     public static function getRoutes()
