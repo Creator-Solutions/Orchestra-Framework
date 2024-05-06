@@ -28,6 +28,7 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * Import controllers from this part of the file
  */
 include_once(__DIR__ . '/core/Controllers/IndexController.php');
+include_once(__DIR__ . '/core/Controllers/SecondController.php');
 
 /**
  * --------------------

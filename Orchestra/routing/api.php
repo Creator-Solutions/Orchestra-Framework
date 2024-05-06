@@ -17,3 +17,5 @@ Route::middleware('auth')->get('/login');
 Route::middleware('auth')->get('/register');
 Route::middleware('auth')->get('/reset');
 Route::middleware('auth')->get('/otp');
+
+Route::middleware('student')->get('/onboard');
