@@ -19,8 +19,8 @@ use \InvalidArgumentException;
 class Route
 {
    public static $middlewares = [];
-   public static $middlewareMap = [];
-   public static $alias;
+   protected static $middlewareMap = [];
+   protected static $alias;
 
    public static function middleware(string $alias): self
    {
@@ -28,16 +28,14 @@ class Route
          throw new InvalidArgumentException('Alias must be of type string');
       }
 
-      // Set the alias property if it's not already set
-      if (!isset(self::$alias)) {
-         self::$alias = $alias;
+      // Initialize the middleware array for the current alias if it doesn't exist
+      if (!isset(self::$middlewares[$alias])) {
+         self::$middlewares[$alias] = [];
       }
-
-      // Initialize middleware array if it doesn't exist for the current alias
-      if (!isset(self::$middlewares[self::$alias])) {
-         self::$middlewares[self::$alias] = [];
-      }
-
+      
+      self::$alias = $alias;
+      
+      // Return a new instance of the Route class
       return new self();
    }
 
