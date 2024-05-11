@@ -4,9 +4,10 @@ use Orchestra\http\Request;
 use Orchestra\http\UrlMatcher;
 use Orchestra\routing\Route;
 use Orchestra\routing\Router;
+use Orchestra\cli\command\CLI;
 
 if (!defined('PHPNEXUS_VERSION')) {
-    require_once 'autoload.php';
+   require_once 'autoload.php';
 }
 
 /**
@@ -44,17 +45,32 @@ include_once(__DIR__ . '/core/Controllers/SecondController.php');
  * Do not make changes to logic below as the logic was carefully
  * placed in order to maximize functionality and quality
  */
-$urlMatcher = new UrlMatcher();
+if (php_sapi_name() === 'cli') {
+   // Remove the script name from the arguments
+   array_shift($argv);
 
-$requestUri = $_SERVER['REQUEST_URI'];
-$requestMethod = $_SERVER['REQUEST_METHOD'];
+   // Parse the command and its arguments
+   $command = isset($argv[0]) ? $argv[0] : null;
+   $arguments = array_slice($argv, 1);
 
-// Extract middleware and endpoint
-$uri = parse_url($requestUri, PHP_URL_PATH);
-$urlParts = explode('/', $uri);
-$middleware = $urlParts[2];
-$endpoint = $urlMatcher->serializeUrl($urlParts);
+   print_r($arguments);
 
-// Get routes and handle request
-$response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
-echo $response;
+   $cli = new CLI($command, $arguments);
+   $cli->configure();
+
+} else {
+   $urlMatcher = new UrlMatcher();
+
+   $requestUri = $_SERVER['REQUEST_URI'];
+   $requestMethod = $_SERVER['REQUEST_METHOD'];
+
+   // Extract middleware and endpoint
+   $uri = parse_url($requestUri, PHP_URL_PATH);
+   $urlParts = explode('/', $uri);
+   $middleware = $urlParts[2];
+   $endpoint = $urlMatcher->serializeUrl($urlParts);
+
+   // Get routes and handle request
+   $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
+   echo $response;
+}

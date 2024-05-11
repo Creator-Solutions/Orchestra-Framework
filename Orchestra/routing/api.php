@@ -14,8 +14,4 @@ include 'Route.php';
  * through the /middleware/endpoint prefixes
  */
 Route::middleware('auth')->get('/login');
-Route::middleware('auth')->get('/register');
-Route::middleware('auth')->get('/reset');
-Route::middleware('auth')->get('/otp');
-
-Route::middleware('student')->get('/onboard');
+Route::middleware('auth')->get('/');
