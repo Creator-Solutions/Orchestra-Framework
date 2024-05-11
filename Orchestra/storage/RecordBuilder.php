@@ -11,9 +11,9 @@ use \Exception;
  * Main Class that handles SQL Calls
  * -> Inits Connection Object Directly.
  * 
- * (c) @author 
+ * (c) author 
  * 
- * @author founderstudios/owenburns
+ * author founderstudios/owenburns
  */
 class RecordBuilder extends DatabaseHelper
 {
@@ -22,6 +22,8 @@ class RecordBuilder extends DatabaseHelper
    private $data;
    private $whereClause;
 
+   private $topFirstIndex;
+
 
    public function __construct(string $table = "")
    {
@@ -29,13 +31,15 @@ class RecordBuilder extends DatabaseHelper
       $this->table = $table;
       $this->data = [];
       $this->whereClause = '';
+      $this->topFirstIndex = false;
    }
 
-   public function getConnectionConfig(): PDO{
+   public function getConnectionConfig(): PDO
+   {
       $services = new Service();
 
       $config = $services->parseConfig();
-      switch ($config['database']){
+      switch ($config['database']) {
          case "MySQL":
             $this->initMySQL();
             break;
@@ -126,6 +130,23 @@ class RecordBuilder extends DatabaseHelper
       return $statement->rowCount();
    }
 
+   public function delete()
+   {
+      if (empty($this->table)) {
+         throw new Exception("Table name not specified.");
+      }
+      if (empty($this->whereClause)) {
+         throw new Exception("WHERE clause not specified for delete operation.");
+      }
+
+      $sql = "DELETE FROM $this->table WHERE $this->whereClause";
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute(array_values($this->data));
+
+      $this->clearData();
+
+      return $statement->rowCount();
+   }
 
    public function select($columns = ['*'])
    {
@@ -146,7 +167,46 @@ class RecordBuilder extends DatabaseHelper
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
 
-   function removeSubstring(string $originalString, string $substringToRemove): string
+   public function selectFirst($columns = ['*'])
+   {
+      if (empty($this->table)) {
+         throw new Exception("Table name not specified.");
+      }
+
+      $columns = implode(', ', $columns);
+      $sql = "SELECT $columns FROM $this->table";
+      if (!empty($this->whereClause)) {
+         $sql .= " WHERE $this->whereClause";
+      }
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute(array_values($this->data));
+
+      $this->clearData();
+
+      return $statement->fetch(PDO::FETCH_ASSOC); // Return only the first row
+   }
+
+   // Method to execute a stored procedure
+   public function callProcedure(string $procedureName, array $parameters = [])
+   {
+      $placeholders = rtrim(str_repeat('?, ', count($parameters)), ', ');
+      $sql = "CALL $procedureName($placeholders)";
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute($parameters);
+      return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
+
+   // Method to execute a stored function
+   public function callFunction(string $functionName, array $parameters = [])
+   {
+      $placeholders = rtrim(str_repeat('?, ', count($parameters)), ', ');
+      $sql = "SELECT $functionName($placeholders)";
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute($parameters);
+      return $statement->fetchColumn();
+   }
+
+   public function removeSubstring(string $originalString, string $substringToRemove): string
    {
       $startIndex = strpos($originalString, $substringToRemove); // Find the starting index of the substring to remove
       if ($startIndex !== false) { // Check if the substring to remove exists

@@ -26,7 +26,7 @@ class DatabaseHelper
                 self::$conn = new PDO("mysql:host=" . $config['host'] . ';dbname=' . $config['db'], $config['user'], $config['password']);
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Exception $ex) {
-                throw new Exception($ex);
+                echo $ex->getMessage();
             }
         }
     }
