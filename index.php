@@ -6,6 +6,9 @@ use Orchestra\routing\Route;
 use Orchestra\routing\Router;
 use Orchestra\cli\command\CLI;
 
+use Orchestra\config\OrchidConfig;
+use Orchestra\logs\Logger;
+
 if (!defined('PHPNEXUS_VERSION')) {
    require_once 'autoload.php';
 }
@@ -57,9 +60,10 @@ if (php_sapi_name() === 'cli') {
 
    $cli = new CLI($command, $arguments);
    $cli->configure();
-
 } else {
    $urlMatcher = new UrlMatcher();
+   $orchidConfig = new OrchidConfig;
+   $config = $orchidConfig->parse();
 
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -69,6 +73,9 @@ if (php_sapi_name() === 'cli') {
    $urlParts = explode('/', $uri);
    $middleware = $urlParts[2];
    $endpoint = $urlMatcher->serializeUrl($urlParts);
+
+   Logger::set_log_directory($config['logs']);
+   Logger::create_log_folder();
 
    // Get routes and handle request
    $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
