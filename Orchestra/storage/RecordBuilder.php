@@ -75,6 +75,26 @@ class RecordBuilder extends DatabaseHelper
       return $this;
    }
 
+   public function or($column, $operator, $value)
+   {
+      if (!empty($this->whereClause)) {
+         $this->whereClause .= " OR ";
+      }
+      $this->whereClause .= "$column $operator ?";
+      $this->data[] = $value;
+      return $this;
+   }
+
+   public function and($column, $operator, $value)
+   {
+      if (!empty($this->whereClause)) {
+         $this->whereClause .= " AND ";
+      }
+      $this->whereClause .= "$column $operator ?";
+      $this->data[] = $value;
+      return $this;
+   }
+
    private function clearData()
    {
       $this->data = [];
