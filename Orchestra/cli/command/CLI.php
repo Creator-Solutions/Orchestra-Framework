@@ -22,7 +22,7 @@ class CLI
    private $command;
    private $arguments;
 
-   private ControllerHandler $dbHandler;
+   private ControllerHandler $handler;
 
    public function __construct($command, $arguments)
    {
@@ -34,7 +34,7 @@ class CLI
    {
       switch ($this->command) {
          case 'controller':
-            $this->dbHandler = new ControllerHandler($this->arguments);
+            $this->handler = new ControllerHandler($this->arguments);
             break;
       }
    }
