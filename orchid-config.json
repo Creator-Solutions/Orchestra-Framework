@@ -8,5 +8,5 @@
       "smtpSecure": "",
       "smtpPort": 587
    },
-   "logs": "/var/www/orchestra/logs/"
+   "logs": "/var/www/orchestra/logs"
 }

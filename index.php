@@ -32,7 +32,7 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * Import controllers from this part of the file
  */
 include_once(__DIR__ . '/core/Controllers/IndexController.php');
-include_once(__DIR__ . '/core/Controllers/SecondController.php');
+//include_once(__DIR__ . '/core/Controllers/SecondController.php');
 
 /**
  * --------------------
@@ -48,6 +48,7 @@ include_once(__DIR__ . '/core/Controllers/SecondController.php');
  * Do not make changes to logic below as the logic was carefully
  * placed in order to maximize functionality and quality
  */
+
 if (php_sapi_name() === 'cli') {
    // Remove the script name from the arguments
    array_shift($argv);
@@ -56,14 +57,23 @@ if (php_sapi_name() === 'cli') {
    $command = isset($argv[0]) ? $argv[0] : null;
    $arguments = array_slice($argv, 1);
 
-   print_r($arguments);
+   // Initialize Logger and set log directory
+   $orchidConfig = new OrchidConfig();
+   $config = $orchidConfig->parse();
+   Logger::set_log_directory($config['logs']);
+   Logger::create_log_folder();
 
    $cli = new CLI($command, $arguments);
    $cli->configure();
 } else {
+   // Similar initialization for web requests
    $urlMatcher = new UrlMatcher();
-   $orchidConfig = new OrchidConfig;
+   $orchidConfig = new OrchidConfig();
    $config = $orchidConfig->parse();
+
+   // Set and create log directory
+   Logger::set_log_directory($config['logs']);
+   Logger::create_log_folder();
 
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
@@ -73,9 +83,6 @@ if (php_sapi_name() === 'cli') {
    $urlParts = explode('/', $uri);
    $middleware = $urlParts[2];
    $endpoint = $urlMatcher->serializeUrl($urlParts);
-
-   Logger::set_log_directory($config['logs']);
-   Logger::create_log_folder();
 
    // Get routes and handle request
    $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);

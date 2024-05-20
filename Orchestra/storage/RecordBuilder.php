@@ -36,19 +36,25 @@ class RecordBuilder extends DatabaseHelper
 
    public function getConnectionConfig(): PDO
    {
-      $services = new Service();
+      try {
+         $services = new Service();
 
-      $config = $services->parseConfig();
-      switch ($config['database']) {
-         case "MySQL":
-            $this->initMySQL();
-            break;
-         case "PostgreSQL":
-            $this->initPG();
-            break;
-         default:
-            $this->initMySQL();
+         $config = $services->parseConfig();
+         switch ($config['database']) {
+            case "MySQL":
+               $this->initMySQL();
+               break;
+            case "PostgreSQL":
+               $this->initPG();
+               break;
+            default:
+               $this->initMySQL();
+         }
+      } catch (Exception $ex) {
+         throw new Exception($ex);
+         self::$conn = $this->initMySQL();
       }
+
 
       return self::$conn;
    }
