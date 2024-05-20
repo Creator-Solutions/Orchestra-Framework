@@ -27,13 +27,13 @@ abstract class Logger extends FileHandler
    {
       $log_folder = (new FileHandler())->getProjectRoot() . self::$logDIR;
 
-      if (!is_dir($log_folder)) {
+      if (!file_exists($log_folder)) {
          if (!mkdir($log_folder, 0777, true)) {
             throw new Exception("Could not create log directory");
          }
       }
 
-      self::$logFile = $log_folder . 'error.log';
+      self::$logFile = $log_folder . DIRECTORY_SEPARATOR . 'error.log';
       if (!file_exists(self::$logFile)) {
          if (!touch(self::$logFile)) {
             throw new Exception("Could not create log file");
@@ -50,7 +50,7 @@ abstract class Logger extends FileHandler
     * Convenience function that handles outputting
     * data to a log file for debugging
     */
-   public static function write($message, $endpoint = "", string $logtype)
+   public static function write($message, string $logtype, $endpoint = "")
    {
       $timestamp = date('Y-m-d H:i:s');
 
@@ -58,11 +58,8 @@ abstract class Logger extends FileHandler
 
       $formattedLogMessage = "[$timestamp $logtype]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
 
-      $result = file_put_contents(self::$logFile, $formattedLogMessage, FILE_APPEND);
-      if ($result === false) {
-         return false;
+      if (!file_put_contents(self::$logFile, $formattedLogMessage, FILE_APPEND)) {
+         throw new \Exception("Unable to write to log file");
       }
-
-      return true;
    }
 }

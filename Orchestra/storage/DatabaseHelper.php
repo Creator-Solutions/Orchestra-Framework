@@ -4,6 +4,8 @@ namespace Orchestra\storage;
 
 use \PDO;
 use \Exception;
+use Orchestra\logs\Logger;
+use Orchestra\logs\LogTypes;
 
 /**
  *  Main class to handle database connection
@@ -26,7 +28,7 @@ class DatabaseHelper
                 self::$conn = new PDO("mysql:host=" . $config['host'] . ';dbname=' . $config['db'], $config['user'], $config['password']);
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Exception $ex) {
-                echo $ex->getMessage();
+                throw new Exception($ex->getMessage());
             }
         }
     }
@@ -41,7 +43,7 @@ class DatabaseHelper
                 self::$conn = new PDO("pgsql:host=" . $config['host'] . ';port=5432;dbname=' . $config['db'], $config['user'], $config['password']);
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Exception $ex) {
-                throw new Exception($ex);
+                throw new Exception($ex->getMessage());
             }
         }
     }

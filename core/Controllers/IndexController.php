@@ -7,6 +7,14 @@ use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 
+use core\handlers\ProjectHandlers;
+use Orchestra\logs\Logger;
+use Orchestra\logs\LogTypes;
+use Orchestra\storage\RecordBuilder;
+use Orchestra\io\FileHandler;
+
+use \Exception;
+
 /**
  * ------------------------
  * Controller File Example
@@ -32,6 +40,9 @@ use Orchestra\routing\Router;
  * you just provide the logic
  * 
  */
+
+$builder = new RecordBuilder();
+$fileHandler = new FileHandler();
 
 Router::post('/', function (Request $req) {
    return new JsonResponse(
