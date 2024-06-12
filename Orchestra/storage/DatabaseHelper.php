@@ -4,8 +4,6 @@ namespace Orchestra\storage;
 
 use \PDO;
 use \Exception;
-use Orchestra\logs\Logger;
-use Orchestra\logs\LogTypes;
 
 /**
  *  Main class to handle database connection
