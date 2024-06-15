@@ -82,6 +82,15 @@ class Router
                     // Set flag to true as at least one middleware endpoint matches
                     $endpointMatched = true;
 
+                    // Check for the required header
+                    $requiredHeader = $middlewareEndpoint['header'];
+                    if ($requiredHeader && empty($request->getHeader($requiredHeader))) {
+                        return json_encode([
+                            "status" => false,
+                            "message" => "Missing header"
+                        ]);
+                    }
+
                     // Execute the callback function associated with the requested URI
                     $callback = self::$routes[$method][$uri];
                     $response = call_user_func($callback, $request);
