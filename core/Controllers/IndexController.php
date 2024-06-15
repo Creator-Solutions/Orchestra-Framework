@@ -44,10 +44,13 @@ use \Exception;
 $builder = new RecordBuilder();
 $fileHandler = new FileHandler();
 
-Router::post('/', function (Request $req) {
+Router::post('/create', function (Request $req) {
+   $test = $req->get("test") ?? "";
+   
    return new JsonResponse(
       [
-         'status' => true
+         'status' => true,
+         'message' => $test
       ],
       Response::HTTP_OK
    );

@@ -32,9 +32,9 @@ class Route
       if (!isset(self::$middlewares[$alias])) {
          self::$middlewares[$alias] = [];
       }
-      
+
       self::$alias = $alias;
-      
+
       // Return a new instance of the Route class
       return new self();
    }
@@ -62,6 +62,37 @@ class Route
       return [
          'endpoint' => $endpoint,
          'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
+      ];
+   }
+
+   public function getProtected(string $endpoint)
+   {
+      if (!isset(self::$alias)) {
+         throw new InvalidArgumentException('Middleware alias is not set');
+      }
+
+      // Initialize middleware array if it doesn't exist for the current alias
+      if (!isset(self::$middlewares[self::$alias])) {
+         self::$middlewares[self::$alias] = [];
+      }
+
+      // Here you would typically define your route handling logic
+      // For demonstration, I'm just returning the endpoint and middleware
+      $parts = explode(':', $endpoint);
+      $endpoint = $parts[0];
+      $requiredHeader = isset($parts[1]) ? $parts[1] : null;
+  
+      self::$middlewares[self::$alias][] = [
+          'endpoint' => $endpoint,
+          'header' => $requiredHeader
+      ];
+  
+      // Here you would typically define your route handling logic
+      // For demonstration, I'm just returning the endpoint and middleware
+      return [
+          'endpoint' => $endpoint,
+          'header' => $requiredHeader,
+          'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
       ];
    }
 
