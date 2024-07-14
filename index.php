@@ -2,16 +2,15 @@
 
 use Orchestra\http\Request;
 use Orchestra\http\UrlMatcher;
-use Orchestra\routing\Route;
+
 use Orchestra\routing\Router;
 use Orchestra\cli\command\CLI;
 
 use Orchestra\config\OrchidConfig;
 use Orchestra\logs\Logger;
 
-if (!defined('PHPNEXUS_VERSION')) {
-   require_once 'autoload.php';
-}
+
+require_once 'autoload.php';
 
 /**
  * -------------------------

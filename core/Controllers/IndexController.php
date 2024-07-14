@@ -7,13 +7,10 @@ use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 
-use core\handlers\ProjectHandlers;
-use Orchestra\logs\Logger;
-use Orchestra\logs\LogTypes;
 use Orchestra\storage\RecordBuilder;
 use Orchestra\io\FileHandler;
 
-use \Exception;
+use Orchestra\env\EnvConfig;
 
 /**
  * ------------------------
@@ -43,13 +40,17 @@ use \Exception;
 
 $builder = new RecordBuilder();
 $fileHandler = new FileHandler();
+$env = new EnvConfig();
 
-Router::post('/create', function (Request $req) {
+Router::post('/create', function (Request $req) use ($env) {
    $test = $req->get("test") ?? "";
-   
+
+   $hostname = $env->getenv('host');
+
    return new JsonResponse(
       [
          'status' => true,
+         'host' => $hostname,
          'message' => $test
       ],
       Response::HTTP_OK
