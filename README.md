@@ -2,7 +2,7 @@
  Orchestra Framework
 </h1>
 <p align="center">
- Empowering Developers to Orchestrate Excellence
+ A Framework for Developers, By Developers
 </p>
 <p align="center">
  Author: Owen Burns
