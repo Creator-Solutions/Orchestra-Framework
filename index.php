@@ -30,7 +30,7 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * 
  * Import controllers from this part of the file
  */
-include_once(__DIR__ . '/core/Controllers/IndexController.php');
+include_once(__DIR__ . '/app/Controllers/IndexController.php');
 
 /**
  * --------------------
@@ -79,8 +79,18 @@ if (php_sapi_name() === 'cli') {
    // Extract middleware and endpoint
    $uri = parse_url($requestUri, PHP_URL_PATH);
    $urlParts = explode('/', $uri);
-   $middleware = $urlParts[2];
-   $endpoint = $urlMatcher->serializeUrl($urlParts);
+
+   $middleware = '';
+   $endpoint = '';
+
+   if (count($urlParts) === 3) {
+      $middleware = $urlParts[1];
+      $endpoint = $urlMatcher->serializeUrl($urlParts);
+   } elseif (count($urlParts) === 2) {
+      $middleware = $urlParts[2];
+      $endpoint = $urlMatcher->serializeUrl($urlParts);
+   }
+
 
    // Get routes and handle request
    $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);

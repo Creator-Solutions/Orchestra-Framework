@@ -7,10 +7,10 @@ use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 
-use Orchestra\storage\RecordBuilder;
 use Orchestra\io\FileHandler;
 
 use Orchestra\env\EnvConfig;
+use Orchestra\templates\Template;
 
 /**
  * ------------------------
@@ -38,13 +38,13 @@ use Orchestra\env\EnvConfig;
  * 
  */
 
-$builder = new RecordBuilder();
 $fileHandler = new FileHandler();
 $env = new EnvConfig();
 
+
 Router::post('/create', function (Request $req) use ($env) {
    $envConfig = $env->parse();
-   
+
    return new JsonResponse(
       [
          'status' => true,
@@ -52,4 +52,9 @@ Router::post('/create', function (Request $req) use ($env) {
       ],
       Response::HTTP_OK
    );
+});
+
+Router::get('/test', function (Request $req) {
+   $template = new Template();
+   return $template->view("home.php", ['message' => 'This is text']);
 });
