@@ -43,15 +43,12 @@ $fileHandler = new FileHandler();
 $env = new EnvConfig();
 
 Router::post('/create', function (Request $req) use ($env) {
-   $test = $req->get("test") ?? "";
-
-   $hostname = $env->getenv('host');
-
+   $envConfig = $env->parse();
+   
    return new JsonResponse(
       [
          'status' => true,
-         'host' => $hostname,
-         'message' => $test
+         'host' => $envConfig,
       ],
       Response::HTTP_OK
    );
