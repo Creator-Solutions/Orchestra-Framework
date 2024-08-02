@@ -83,7 +83,7 @@ class Router
                     $endpointMatched = true;
 
                     // Check for the required header
-                    $requiredHeader = $middlewareEndpoint['header'];
+                    $requiredHeader = $middlewareEndpoint['header'] ?? null;
                     if ($requiredHeader && empty($request->getHeader($requiredHeader))) {
                         return json_encode([
                             "status" => false,

@@ -44,7 +44,7 @@ class Template {
   }
 
   public function view($template, $data = []){
-      $this->templatePath = dirname(__DIR__) . "/../core/Templates/$template";
+      $this->templatePath = dirname(__DIR__) . "/../app/resources/views/$template";
       if (!file_exists($this->templatePath)) {
          throw new \Exception("Template file not found: $template");
      }

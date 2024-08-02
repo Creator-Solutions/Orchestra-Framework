@@ -15,3 +15,5 @@ include 'Route.php';
  */
 Route::middleware('auth')->get('/check');
 Route::middleware('project')->getProtected('/create:Token');
+
+Route::middleware('auth')->get('/test');
