@@ -1,6 +1,6 @@
 <?php
 
-namespace core\Controllers;
+namespace App\Controllers;
 
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
@@ -11,6 +11,11 @@ use Orchestra\io\FileHandler;
 
 use Orchestra\env\EnvConfig;
 use Orchestra\templates\Template;
+
+use Orchestra\config\OrchidConfig;
+
+use App\Models\User;
+use Exception;
 
 /**
  * ------------------------
@@ -40,21 +45,76 @@ use Orchestra\templates\Template;
 
 $fileHandler = new FileHandler();
 $env = new EnvConfig();
+$config = new OrchidConfig();
 
 
-Router::post('/create', function (Request $req) use ($env) {
-   $envConfig = $env->parse();
+Router::post('/test', function (Request $req) {
+   // User::test();
+
+   $user = User::find(1);
 
    return new JsonResponse(
       [
          'status' => true,
-         'host' => $envConfig,
+         'message' => 'success',
+         'user' => $user
       ],
       Response::HTTP_OK
    );
 });
 
-Router::get('/test', function (Request $req) {
-   $template = new Template();
-   return $template->view("home.php", ['message' => 'This is text']);
+Router::post('/edit', function (Request $req) {
+   // User::test();
+
+   try {
+      $user = User::find(1);
+
+      $user->name = "owen1";
+      $user->email = "test@1example.com";
+      $user->save();
+
+      return new JsonResponse(
+         [
+            'status' => true,
+            'message' => 'success',
+            'user' => $user
+         ],
+         Response::HTTP_OK
+      );
+   } catch (Exception $e) {
+      return new JsonResponse(
+         [
+            'status' => true,
+            'message' => 'success',
+            'error' => $e
+         ],
+         Response::HTTP_OK
+      );
+   }
+});
+
+Router::delete('/delete/{id}', function (Request $req, $id) {
+   // User::test();
+
+   try {
+      $user = User::delete($id);
+
+      return new JsonResponse(
+         [
+            'status' => true,
+            'message' => 'success',
+            'user' => $user
+         ],
+         Response::HTTP_OK
+      );
+   } catch (Exception $e) {
+      return new JsonResponse(
+         [
+            'status' => true,
+            'message' => 'success',
+            'error' => $e
+         ],
+         Response::HTTP_OK
+      );
+   }
 });

@@ -33,12 +33,78 @@ class Router
 
     public static function post(string $path, callable $callback)
     {
-        self::$routes['POST'][$path] = $callback;
+        self::registerRoute('POST', $path, $callback);
     }
 
     public static function get(string $path, callable $callback)
     {
-        self::$routes['GET'][$path] = $callback;
+        self::registerRoute('GET', $path, $callback);
+    }
+
+    public static function delete(string $path, callable $callback)
+    {
+        self::registerRoute('DELETE', $path, $callback);
+    }
+
+    public static function put(string $path, callable $callback)
+    {
+        self::registerRoute('PUT', $path, $callback);
+    }
+
+    public static function patch(string $path, callable $callback)
+    {
+        self::registerRoute('PATCH', $path, $callback);
+    }
+
+    protected static function registerRoute(string $method, string $path, callable $callback)
+    {
+        $regex = self::convertPathToRegex($path);
+        self::$routes[$method][$regex['pattern']] = [
+            'callback' => $callback,
+            'params' => $regex['params']
+        ];
+    }
+
+    protected static function convertPathToRegex(string $path): array
+    {
+        $params = [];
+        $pattern = preg_replace_callback('/{(\w+)}/', function ($matches) use (&$params) {
+            $params[] = $matches[1];
+            return '(\w+)'; // or '([^/]+)' for more general matching
+        }, $path);
+
+        return [
+            'pattern' => "#^{$pattern}$#",
+            'params' => $params
+        ];
+    }
+
+    public static function handle(string $method, string $middleware, string $uri, $request)
+    {
+        self::applyRateLimit($uri);
+
+        foreach (self::$routes[$method] as $pattern => $route) {
+            if (preg_match($pattern, $uri, $matches)) {
+                array_shift($matches);
+
+                $params = [];
+                foreach ($route['params'] as $index => $paramName) {
+                    $params[$paramName] = $matches[$index] ?? null;
+                }
+
+                $response = call_user_func_array($route['callback'], array_merge([$request], $params));
+
+                if ($response instanceof JsonResponse) {
+                    $response->send();
+                } elseif (is_string($response)) {
+                    echo $response;
+                }
+
+                return;
+            }
+        }
+
+        echo "404 Not Found";
     }
 
     protected static function applyRateLimit(string $uri)
@@ -62,57 +128,6 @@ class Router
             }
         } catch (\Exception $e) {
             echo $e;
-        }
-    }
-
-    public static function handle(string $method, string $middleware, string $uri, $request)
-    {
-        // Check if middleware exists
-        if (isset(Route::$middlewares[$middleware])) {
-            // Creates an array of the endpoints associated with the middleware
-            $middlewares = Route::$middlewares[$middleware];
-
-            // Flag to check if any middleware endpoint matches the requested URI
-            $endpointMatched = false;
-
-            // Loop through the endpoints assigned to the current middleware
-            foreach ($middlewares as $middlewareEndpoint) {
-                // Check if the current middleware endpoint matches the requested URI
-                if ($middlewareEndpoint['endpoint'] === $uri) {
-                    // Set flag to true as at least one middleware endpoint matches
-                    $endpointMatched = true;
-
-                    // Check for the required header
-                    $requiredHeader = $middlewareEndpoint['header'] ?? null;
-                    if ($requiredHeader && empty($request->getHeader($requiredHeader))) {
-                        return json_encode([
-                            "status" => false,
-                            "message" => "Missing header"
-                        ]);
-                    }
-
-                    // Execute the callback function associated with the requested URI
-                    $callback = self::$routes[$method][$uri];
-                    $response = call_user_func($callback, $request);
-
-                    // Check the type of response
-                    if ($response instanceof JsonResponse) {
-                        // Send JSON response
-                        $response->send();
-                    } elseif (is_string($response)) {
-                        // Send string response
-                        echo $response;
-                    }
-
-                    // Exit the loop as we found a matching endpoint
-                    break;
-                }
-            }
-
-            // If none of the middleware endpoints match, return a 404 response
-            if (!$endpointMatched) {
-                echo "404 Not Found";
-            }
         }
     }
 
