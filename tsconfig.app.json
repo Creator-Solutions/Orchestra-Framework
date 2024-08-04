@@ -23,5 +23,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["app/resources/js/src/**/*", ],
+  "exclude": ["node_modules", "public"]
 }

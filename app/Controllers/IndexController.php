@@ -12,6 +12,8 @@ use Orchestra\io\FileHandler;
 use Orchestra\env\EnvConfig;
 use Orchestra\templates\Template;
 
+use Orchestra\config\OrchidConfig;
+
 /**
  * ------------------------
  * Controller File Example
@@ -40,6 +42,7 @@ use Orchestra\templates\Template;
 
 $fileHandler = new FileHandler();
 $env = new EnvConfig();
+$config = new OrchidConfig();
 
 
 Router::post('/create', function (Request $req) use ($env) {
@@ -54,7 +57,9 @@ Router::post('/create', function (Request $req) use ($env) {
    );
 });
 
-Router::get('/test', function (Request $req) {
+Router::get('/test', function (Request $req) use ($config) {
    $template = new Template();
-   return $template->view("home.php", ['message' => 'This is text']);
+
+   // Pass the Vite dev server URL to the template
+   return $template->view('welcome');
 });

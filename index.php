@@ -31,6 +31,8 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * Import controllers from this part of the file
  */
 include_once(__DIR__ . '/app/Controllers/IndexController.php');
+include_once(__DIR__ . '/app/Controllers/SecondController.php');
+
 
 /**
  * --------------------
@@ -62,7 +64,7 @@ if (php_sapi_name() === 'cli') {
    Logger::create_log_folder();
 
    $cli = new CLI($command, $arguments);
-   $cli->configure();
+   $cli->execute();  // Use execute instead of configure
 } else {
    // Similar initialization for web requests
    $urlMatcher = new UrlMatcher();

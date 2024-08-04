@@ -1,8 +1,8 @@
 <?php
 
-namespace Orchestra\storage;
+namespace Orchestra\database;
 
-use Orchestra\storage\DatabaseHelper;
+use Orchestra\database\DatabaseHelper;
 
 use \PDO;
 use \Exception;

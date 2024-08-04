@@ -1,6 +1,6 @@
 <?php
 
-namespace Orchestra\storage;
+namespace Orchestra\database;
 
 use \PDO;
 use \Exception;

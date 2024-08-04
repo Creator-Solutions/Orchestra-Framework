@@ -4,25 +4,11 @@ namespace Orchestra\cli\command;
 
 use Orchestra\cli\handlers\ControllerHandler;
 
-
-/**
- * --------------------------
- * Command Line Interpretor
- * --------------------------
- * 
- * Main class that handles command line commands.
- * Delegates functions based on command arguments
- * 
- * @author founderstud/owen
- * @source namespace Orchestra\cli\command
- */
 class CLI
 {
-
    private $command;
    private $arguments;
-
-   private ControllerHandler $handler;
+   private $handler;
 
    public function __construct($command, $arguments)
    {
@@ -30,12 +16,32 @@ class CLI
       $this->arguments = $arguments;
    }
 
-   public function configure()
+   public function execute()
    {
-      switch ($this->command) {
-         case 'controller':
-            $this->handler = new ControllerHandler($this->arguments);
+      $commandParts = explode(':', $this->command);
+      $mainCommand = $commandParts[0];
+      $subCommand = $commandParts[1] ?? null;
+
+      switch ($mainCommand) {
+         case 'make':
+            $this->handleMakeCommand($subCommand);
             break;
+            // Add more commands as needed
+         default:
+            echo "Unknown command: $mainCommand\n";
+      }
+   }
+
+   private function handleMakeCommand($subCommand)
+   {
+      switch ($subCommand) {
+         case 'controller':
+            $this->handler = new ControllerHandler($this->arguments[0]);
+
+            break;
+            // Add more sub-commands as needed
+         default:
+            echo "Unknown make command: $subCommand\n";
       }
    }
 }
