@@ -30,7 +30,9 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * 
  * Import controllers from this part of the file
  */
-include_once(__DIR__ . '/core/Controllers/IndexController.php');
+include_once(__DIR__ . '/app/Controllers/IndexController.php');
+
+
 
 /**
  * --------------------
@@ -62,20 +64,18 @@ if (php_sapi_name() === 'cli') {
    Logger::create_log_folder();
 
    $cli = new CLI($command, $arguments);
-   $cli->configure();
+   $cli->execute();  // Use execute instead of configure
 } else {
    // Similar initialization for web requests
    $urlMatcher = new UrlMatcher();
    $orchidConfig = new OrchidConfig();
    $config = $orchidConfig->parse();
-
    // Set and create log directory
    Logger::set_log_directory($config['logs']);
    Logger::create_log_folder();
-
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
-
+   
    // Extract middleware and endpoint
    $uri = parse_url($requestUri, PHP_URL_PATH);
    $urlParts = explode('/', $uri);
