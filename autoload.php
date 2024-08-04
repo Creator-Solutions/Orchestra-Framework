@@ -3,7 +3,7 @@
 define('PHPNEXUS_VERSION', '0.0.1');
 
 $classmap = [
-    'core' => __DIR__ . '/core/',
+    'App' => __DIR__ . '/app/',
     'Orchestra' => __DIR__ . '/Orchestra/',
 ];
 

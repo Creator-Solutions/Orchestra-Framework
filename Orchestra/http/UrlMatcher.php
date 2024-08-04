@@ -63,15 +63,15 @@ class UrlMatcher
     public function serializeUrl(array $url = []): string
     {
 
-        if (count($url) === 3){
+        if (count($url) === 3) {
             return "/" . $url[2];
         }
 
-        if (count($url) === 4) {
+        elseif (count($url) === 4) {
             return "/" . $url[3];
         }
 
-        if (count($url) === 5) {
+        elseif (count($url) === 5) {
             return "/" . $url[3] . "/" . $url[4];
         }
     }

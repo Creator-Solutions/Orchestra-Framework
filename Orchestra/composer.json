@@ -1,18 +1,19 @@
 {
-    "name": "orchestra/orchestra",
-    "description": "Orchestra Framework in PHP",
-    "type": "library",
-    "license": "propietary",
-    "autoload": {
-        "psr-4": {
-            "Aurora\\Aurora\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "Owen Burns",
-            "email": "owenburns39@gmail.com"
-        }
-    ],
-    "minimum-stability": "dev"
+  "name": "orchestra/orchestra",
+  "description": "Orchestra Framework in PHP",
+  "type": "library",
+  "license": "propietary",
+  "autoload": {
+    "psr-4": {
+      "Orchestra\\Sonata\\": "Orchestra/Sonata/",
+      "app\\Models\\": "app/Models/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Owen Burns",
+      "email": "owenburns39@gmail.com"
+    }
+  ],
+  "minimum-stability": "dev"
 }

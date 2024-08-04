@@ -22,7 +22,7 @@ class ControllerHandler
       echo "Generating controller \n";
 
       try {
-         $templateController = $this->handler->getProjectRoot() . "/Orchestra/cli/Controller/Template.php";
+         $templateController = $this->handler->getProjectRoot() . "/Orchestra/cli/Templates/Controller.php";
          $controllerFile = $this->handler->getProjectRoot() . "/app/Controllers/$controllerName.php"; // Ensure .php extension
 
          if (!file_exists($templateController)) {

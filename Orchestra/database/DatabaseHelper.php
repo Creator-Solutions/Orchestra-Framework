@@ -4,6 +4,7 @@ namespace Orchestra\database;
 
 use \PDO;
 use \Exception;
+use Orchestra\env\EnvConfig;
 
 /**
  *  Main class to handle database connection
@@ -17,28 +18,13 @@ class DatabaseHelper
      *  Function to initialize database connection.
      * @throws Exception
      */
-    public static function initMySQL()
+    public static function init()
     {
-        $config = parse_ini_file('config.ini');
+        $env = new EnvConfig();
 
         if (self::$conn === null) {
             try {
-                self::$conn = new PDO("mysql:host=" . $config['host'] . ';dbname=' . $config['db'], $config['user'], $config['password']);
-                self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            } catch (Exception $ex) {
-                throw new Exception($ex->getMessage());
-            }
-        }
-    }
-
-    public static function initPG()
-    {
-        $config = parse_ini_file('config.ini');
-
-        if (self::$conn === null) {
-            try {
-                // Connect to PostgreSQL with username and password
-                self::$conn = new PDO("pgsql:host=" . $config['host'] . ';port=5432;dbname=' . $config['db'], $config['user'], $config['password']);
+                self::$conn = new PDO($env->getenv('DB_CONNECTION').":host=" . $env->getenv('DB_HOST') . ';dbname=' . $env->getenv('DB_DATABASE'), $env->getenv('DB_USERNAME'), $env->getenv('DB_PASSWORD'));
                 self::$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             } catch (Exception $ex) {
                 throw new Exception($ex->getMessage());

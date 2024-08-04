@@ -3,12 +3,16 @@
 namespace Orchestra\cli\command;
 
 use Orchestra\cli\handlers\ControllerHandler;
+use Orchestra\cli\handlers\MigrationHandler;
+use Orchestra\cli\handlers\ModelHandler;
 
 class CLI
 {
    private $command;
    private $arguments;
    private $handler;
+
+   private Command $cmd;
 
    public function __construct($command, $arguments)
    {
@@ -26,7 +30,9 @@ class CLI
          case 'make':
             $this->handleMakeCommand($subCommand);
             break;
-            // Add more commands as needed
+         case 'migrate':
+            $this->handleMigrateCommand($subCommand);
+            break;
          default:
             echo "Unknown command: $mainCommand\n";
       }
@@ -37,11 +43,29 @@ class CLI
       switch ($subCommand) {
          case 'controller':
             $this->handler = new ControllerHandler($this->arguments[0]);
-
             break;
-            // Add more sub-commands as needed
+         case 'model':
+            $this->handler = new ModelHandler($this->arguments[0]);
+            break;
+         case 'migration':
+            $this->handler = new MigrationHandler($this->arguments[0]);
+            break;
          default:
             echo "Unknown make command: $subCommand\n";
+      }
+   }
+
+   private function handleMigrateCommand($subCommand)
+   {
+      switch ($subCommand) {
+         case 'up':
+            MigrationHandler::migrate();
+            break;
+         case 'down':
+            MigrationHandler::rollback();
+            break;
+         default:
+            echo "Unknown migrate command: $subCommand\n";
       }
    }
 }
