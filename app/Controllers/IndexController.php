@@ -49,72 +49,11 @@ $config = new OrchidConfig();
 
 
 Router::post('/test', function (Request $req) {
-   // User::test();
-
-   $user = User::find(1);
-
    return new JsonResponse(
       [
          'status' => true,
          'message' => 'success',
-         'user' => $user
       ],
       Response::HTTP_OK
    );
-});
-
-Router::post('/edit', function (Request $req) {
-   // User::test();
-
-   try {
-      $user = User::find(1);
-
-      $user->name = "owen1";
-      $user->email = "test@1example.com";
-      $user->save();
-
-      return new JsonResponse(
-         [
-            'status' => true,
-            'message' => 'success',
-            'user' => $user
-         ],
-         Response::HTTP_OK
-      );
-   } catch (Exception $e) {
-      return new JsonResponse(
-         [
-            'status' => true,
-            'message' => 'success',
-            'error' => $e
-         ],
-         Response::HTTP_OK
-      );
-   }
-});
-
-Router::delete('/delete/{id}', function (Request $req, $id) {
-   // User::test();
-
-   try {
-      $user = User::delete($id);
-
-      return new JsonResponse(
-         [
-            'status' => true,
-            'message' => 'success',
-            'user' => $user
-         ],
-         Response::HTTP_OK
-      );
-   } catch (Exception $e) {
-      return new JsonResponse(
-         [
-            'status' => true,
-            'message' => 'success',
-            'error' => $e
-         ],
-         Response::HTTP_OK
-      );
-   }
 });
