@@ -28,7 +28,6 @@ use Orchestra\io\FileHandler;
  */
 class Router
 {
-
     protected static $routes = [];
 
     public static function post(string $path, callable $callback)
@@ -41,7 +40,15 @@ class Router
         self::registerRoute('GET', $path, $callback);
     }
 
-    
+    public static function put(string $path, callable $callback)
+    {
+        self::registerRoute('PUT', $path, $callback);
+    }
+
+    public static function delete(string $path, callable $callback)
+    {
+        self::registerRoute('DELETE', $path, $callback);
+    }
 
     protected static function convertPathToRegex(string $path): array
     {
@@ -96,6 +103,11 @@ class Router
     {
         // Apply middleware and rate limiting (if any)
         self::applyRateLimit($uri);
+
+        // Initialize the routes array for the method if not already done
+        if (!isset(self::$routes[$method])) {
+            self::$routes[$method] = [];
+        }
 
         // Loop through the registered routes for the given method
         foreach (self::$routes[$method] as $pattern => $route) {
