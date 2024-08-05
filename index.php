@@ -76,13 +76,12 @@ if (php_sapi_name() === 'cli') {
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
    
-   // Extract middleware and endpoint
    $uri = parse_url($requestUri, PHP_URL_PATH);
-   $urlParts = explode('/', $uri);
-   $middleware = $urlParts[2];
-   $endpoint = $urlMatcher->serializeUrl($urlParts);
+   $urlParts = explode('/', trim($uri, '/'));
 
-   // Get routes and handle request
+   $middleware = $urlParts[0] ?? 'default';
+   $endpoint = '/' . ($urlParts[1] ?? '');
+
    $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
    echo $response;
 }
