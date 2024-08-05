@@ -45,7 +45,18 @@ use Exception;
 
 
 
-Router::get('/', function (Request $req) {
-   $template = new Template();
-   return $template->view('welcome');
+Router::post('/test', function (Request $req) {
+   $val = $req->get('test') ?? "";
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => false,
+         'value' => $val
+      ],
+      Response::HTTP_OK
+   );
+});
+
+Router::get('/', function(){
+   return (new Template())->view('welcome');
 });
