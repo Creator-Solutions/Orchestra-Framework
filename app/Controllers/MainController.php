@@ -1,21 +1,12 @@
 <?php
 
-namespace App\Controllers;
+namespace core\Controllers;
 
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
-
-use Orchestra\io\FileHandler;
-
-use Orchestra\env\EnvConfig;
 use Orchestra\templates\Template;
-
-use Orchestra\config\OrchidConfig;
-
-use App\Models\User;
-use Exception;
 
 /**
  * ------------------------
@@ -43,17 +34,6 @@ use Exception;
  * 
  */
 
-$fileHandler = new FileHandler();
-$env = new EnvConfig();
-$config = new OrchidConfig();
-
-
-Router::post('/test', function (Request $req) {
-   return new JsonResponse(
-      [
-         'status' => true,
-         'message' => 'success',
-      ],
-      Response::HTTP_OK
-   );
+Router::get('/', function (Request $req) {
+   return (new Template())->view('welcome');
 });
