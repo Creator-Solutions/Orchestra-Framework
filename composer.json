@@ -1,5 +1,5 @@
 {
-   "name": "maestro/orchestra-framework",
+   "name": "euphony/orchestra-framework",
    "description": "Orchestra is a custom PHP framework for building server-side rendered web applications, offering a streamlined and flexible development experience.",
    "require": {
        "php": ">=8.2",
