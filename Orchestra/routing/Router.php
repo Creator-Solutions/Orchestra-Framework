@@ -41,29 +41,7 @@ class Router
         self::registerRoute('GET', $path, $callback);
     }
 
-    public static function delete(string $path, callable $callback)
-    {
-        self::registerRoute('DELETE', $path, $callback);
-    }
-
-    public static function put(string $path, callable $callback)
-    {
-        self::registerRoute('PUT', $path, $callback);
-    }
-
-    public static function patch(string $path, callable $callback)
-    {
-        self::registerRoute('PATCH', $path, $callback);
-    }
-
-    protected static function registerRoute(string $method, string $path, callable $callback)
-    {
-        $regex = self::convertPathToRegex($path);
-        self::$routes[$method][$regex['pattern']] = [
-            'callback' => $callback,
-            'params' => $regex['params']
-        ];
-    }
+    
 
     protected static function convertPathToRegex(string $path): array
     {
@@ -79,32 +57,15 @@ class Router
         ];
     }
 
-    public static function handle(string $method, string $middleware, string $uri, $request)
+    // Register a route with a given method, path, and callback
+    protected static function registerRoute(string $method, string $path, callable $callback)
     {
-        self::applyRateLimit($uri);
-
-        foreach (self::$routes[$method] as $pattern => $route) {
-            if (preg_match($pattern, $uri, $matches)) {
-                array_shift($matches);
-
-                $params = [];
-                foreach ($route['params'] as $index => $paramName) {
-                    $params[$paramName] = $matches[$index] ?? null;
-                }
-
-                $response = call_user_func_array($route['callback'], array_merge([$request], $params));
-
-                if ($response instanceof JsonResponse) {
-                    $response->send();
-                } elseif (is_string($response)) {
-                    echo $response;
-                }
-
-                return;
-            }
-        }
-
-        echo "404 Not Found";
+        // Convert the path into a regex pattern and extract parameter names
+        $regex = self::convertPathToRegex($path);
+        self::$routes[$method][$regex['pattern']] = [
+            'callback' => $callback,
+            'params' => $regex['params']
+        ];
     }
 
     protected static function applyRateLimit(string $uri)
@@ -129,6 +90,42 @@ class Router
         } catch (\Exception $e) {
             echo $e;
         }
+    }
+
+    public static function handle(string $method, string $middleware, string $uri, $request)
+    {
+        // Apply middleware and rate limiting (if any)
+        self::applyRateLimit($uri);
+
+        // Loop through the registered routes for the given method
+        foreach (self::$routes[$method] as $pattern => $route) {
+            // Check if the URI matches the route pattern
+            if (preg_match($pattern, $uri, $matches)) {
+                // Remove the first match (the full match)
+                array_shift($matches);
+
+                // Extract parameters from the matches
+                $params = [];
+                foreach ($route['params'] as $index => $paramName) {
+                    $params[$paramName] = $matches[$index] ?? null;
+                }
+
+                // Add request and params as arguments to the callback
+                $response = call_user_func_array($route['callback'], array_merge([$request], $params));
+
+                // Handle the response (JSON, string, etc.)
+                if ($response instanceof JsonResponse) {
+                    $response->send();
+                } elseif (is_string($response)) {
+                    echo $response;
+                }
+
+                return; // Stop after the first match
+            }
+        }
+
+        // If no route matches, return a 404 response
+        echo "404 Not Found";
     }
 
     public static function getRoutes()

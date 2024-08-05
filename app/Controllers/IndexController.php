@@ -43,17 +43,9 @@ use Exception;
  * 
  */
 
-$fileHandler = new FileHandler();
-$env = new EnvConfig();
-$config = new OrchidConfig();
 
 
-Router::post('/test', function (Request $req) {
-   return new JsonResponse(
-      [
-         'status' => true,
-         'message' => 'success',
-      ],
-      Response::HTTP_OK
-   );
+Router::get('/', function (Request $req) {
+   $template = new Template();
+   return $template->view('welcome');
 });
