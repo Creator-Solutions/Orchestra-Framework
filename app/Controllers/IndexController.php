@@ -1,16 +1,21 @@
 <?php
 
-namespace core\Controllers;
+namespace App\Controllers;
 
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 
-use Orchestra\storage\RecordBuilder;
 use Orchestra\io\FileHandler;
 
 use Orchestra\env\EnvConfig;
+use Orchestra\templates\Template;
+
+use Orchestra\config\OrchidConfig;
+
+use App\Models\User;
+use Exception;
 
 /**
  * ------------------------
@@ -38,21 +43,20 @@ use Orchestra\env\EnvConfig;
  * 
  */
 
-$builder = new RecordBuilder();
-$fileHandler = new FileHandler();
-$env = new EnvConfig();
 
-Router::post('/create', function (Request $req) use ($env) {
-   $test = $req->get("test") ?? "";
 
-   $hostname = $env->getenv('host');
-
+Router::post('/test', function (Request $req) {
+   $val = $req->get('test') ?? "";
    return new JsonResponse(
       [
-         'status' => true,
-         'host' => $hostname,
-         'message' => $test
+         'message' => 'success',
+         'status' => false,
+         'value' => $val
       ],
       Response::HTTP_OK
    );
+});
+
+Router::get('/', function(){
+   return (new Template())->view('welcome');
 });

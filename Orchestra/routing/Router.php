@@ -28,17 +28,51 @@ use Orchestra\io\FileHandler;
  */
 class Router
 {
-
     protected static $routes = [];
 
     public static function post(string $path, callable $callback)
     {
-        self::$routes['POST'][$path] = $callback;
+        self::registerRoute('POST', $path, $callback);
     }
 
     public static function get(string $path, callable $callback)
     {
-        self::$routes['GET'][$path] = $callback;
+        self::registerRoute('GET', $path, $callback);
+    }
+
+    public static function put(string $path, callable $callback)
+    {
+        self::registerRoute('PUT', $path, $callback);
+    }
+
+    public static function delete(string $path, callable $callback)
+    {
+        self::registerRoute('DELETE', $path, $callback);
+    }
+
+    protected static function convertPathToRegex(string $path): array
+    {
+        $params = [];
+        $pattern = preg_replace_callback('/{(\w+)}/', function ($matches) use (&$params) {
+            $params[] = $matches[1];
+            return '(\w+)'; // or '([^/]+)' for more general matching
+        }, $path);
+
+        return [
+            'pattern' => "#^{$pattern}$#",
+            'params' => $params
+        ];
+    }
+
+    // Register a route with a given method, path, and callback
+    protected static function registerRoute(string $method, string $path, callable $callback)
+    {
+        // Convert the path into a regex pattern and extract parameter names
+        $regex = self::convertPathToRegex($path);
+        self::$routes[$method][$regex['pattern']] = [
+            'callback' => $callback,
+            'params' => $regex['params']
+        ];
     }
 
     protected static function applyRateLimit(string $uri)
@@ -67,53 +101,43 @@ class Router
 
     public static function handle(string $method, string $middleware, string $uri, $request)
     {
-        // Check if middleware exists
-        if (isset(Route::$middlewares[$middleware])) {
-            // Creates an array of the endpoints associated with the middleware
-            $middlewares = Route::$middlewares[$middleware];
+        // Apply middleware and rate limiting (if any)
+        self::applyRateLimit($uri);
 
-            // Flag to check if any middleware endpoint matches the requested URI
-            $endpointMatched = false;
+        // Initialize the routes array for the method if not already done
+        if (!isset(self::$routes[$method])) {
+            self::$routes[$method] = [];
+        }
 
-            // Loop through the endpoints assigned to the current middleware
-            foreach ($middlewares as $middlewareEndpoint) {
-                // Check if the current middleware endpoint matches the requested URI
-                if ($middlewareEndpoint['endpoint'] === $uri) {
-                    // Set flag to true as at least one middleware endpoint matches
-                    $endpointMatched = true;
+        // Loop through the registered routes for the given method
+        foreach (self::$routes[$method] as $pattern => $route) {
+            // Check if the URI matches the route pattern
+            if (preg_match($pattern, $uri, $matches)) {
+                // Remove the first match (the full match)
+                array_shift($matches);
 
-                    // Check for the required header
-                    $requiredHeader = $middlewareEndpoint['header'];
-                    if ($requiredHeader && empty($request->getHeader($requiredHeader))) {
-                        return json_encode([
-                            "status" => false,
-                            "message" => "Missing header"
-                        ]);
-                    }
-
-                    // Execute the callback function associated with the requested URI
-                    $callback = self::$routes[$method][$uri];
-                    $response = call_user_func($callback, $request);
-
-                    // Check the type of response
-                    if ($response instanceof JsonResponse) {
-                        // Send JSON response
-                        $response->send();
-                    } elseif (is_string($response)) {
-                        // Send string response
-                        echo $response;
-                    }
-
-                    // Exit the loop as we found a matching endpoint
-                    break;
+                // Extract parameters from the matches
+                $params = [];
+                foreach ($route['params'] as $index => $paramName) {
+                    $params[$paramName] = $matches[$index] ?? null;
                 }
-            }
 
-            // If none of the middleware endpoints match, return a 404 response
-            if (!$endpointMatched) {
-                echo "404 Not Found";
+                // Add request and params as arguments to the callback
+                $response = call_user_func_array($route['callback'], array_merge([$request], $params));
+
+                // Handle the response (JSON, string, etc.)
+                if ($response instanceof JsonResponse) {
+                    $response->send();
+                } elseif (is_string($response)) {
+                    echo $response;
+                }
+
+                return; // Stop after the first match
             }
         }
+
+        // If no route matches, return a 404 response
+        echo "404 Not Found";
     }
 
     public static function getRoutes()
