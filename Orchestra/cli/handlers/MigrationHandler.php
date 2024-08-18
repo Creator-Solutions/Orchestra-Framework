@@ -39,12 +39,17 @@ class MigrationHandler
       try {
          $migrationTemplate = $this->handler->getProjectRoot() . "/Orchestra/cli/Templates/Migration.php";
          $timestamp = $this->getTimestamp();
+
          $filename = sprintf('%s_%s.php', $timestamp, $this->migrationName);
-         $migrationFile = $this->handler->getProjectRoot() . "/app/Migrations/$filename.php";
+         $migrationFile = $this->handler->getProjectRoot() . "/app/migrations/$filename";
+
+         if (!file_exists($this->handler->getProjectRoot() . "/app/migrations")) {
+            mkdir($this->handler->getProjectRoot() . "/app/migrations");
+         }
 
          if (copy($migrationTemplate, $migrationFile)) {
             echo "\n";
-            echo "migration created successfully.............$this->migrationName";
+            echo "migration created successfully.............$this->migrationName \n";
             echo "\n";
          }
       } catch (Exception $e) {
