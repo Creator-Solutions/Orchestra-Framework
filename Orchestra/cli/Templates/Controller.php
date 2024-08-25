@@ -1,6 +1,6 @@
 <?php
 
-namespace core\Controllers;
+namespace app\Controllers;
 
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;

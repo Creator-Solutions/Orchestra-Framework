@@ -101,42 +101,39 @@ class Router
 
     public static function handle(string $method, string $middleware, string $uri, $request)
     {
-        // Apply middleware and rate limiting (if any)
         self::applyRateLimit($uri);
 
-        // Initialize the routes array for the method if not already done
-        if (!isset(self::$routes[$method])) {
-            self::$routes[$method] = [];
+        $middlewares = Route::getEndpointsForMiddleware($middleware);
+        foreach ($middlewares as $mw) {
+            // Execute each middleware before handling the request
+            $controller = Route::getController($mw);
+            if ($controller) {
+                $controllerInstance = new $controller();
+                $controllerInstance->handle($request);
+            }
         }
 
-        // Loop through the registered routes for the given method
         foreach (self::$routes[$method] as $pattern => $route) {
-            // Check if the URI matches the route pattern
             if (preg_match($pattern, $uri, $matches)) {
-                // Remove the first match (the full match)
                 array_shift($matches);
 
-                // Extract parameters from the matches
                 $params = [];
                 foreach ($route['params'] as $index => $paramName) {
                     $params[$paramName] = $matches[$index] ?? null;
                 }
 
-                // Add request and params as arguments to the callback
                 $response = call_user_func_array($route['callback'], array_merge([$request], $params));
 
-                // Handle the response (JSON, string, etc.)
                 if ($response instanceof JsonResponse) {
                     $response->send();
                 } elseif (is_string($response)) {
                     echo $response;
                 }
 
-                return; // Stop after the first match
+                return;
             }
         }
 
-        // If no route matches, return a 404 response
         echo "404 Not Found";
     }
 
