@@ -5,47 +5,25 @@ namespace Orchestra\cli\handlers;
 use Exception;
 use Orchestra\io\FileHandler;
 
-/**
- * ----------------------
- * CLI Database Handler
- * ----------------------
- * 
- * Handles all functionality
- * based on CLI command 
- * linked to DB;
- * 
- * @use Orchestra\storage\DatabaseHelper
- * @use Orchestra\config\OrchidConfig
- * @author founderstud\owen
- * @source namespace Orchestra\cli\handler
- */
 class ControllerHandler
 {
-
    private FileHandler $handler;
+   private $controllerName;
 
-   public function __construct($arguments)
+   public function __construct($controllerName)
    {
       $this->handler = new FileHandler();
-      $this->configure($arguments);
-   }
-
-   public function configure($arguments)
-   {
-      switch ($arguments[0]) {
-         case 'generate':
-            $this->generate_controller($arguments[1]);
-            break;
-      }
+      $this->controllerName = $controllerName;
+      $this->generate_controller($this->controllerName);
    }
 
    public function generate_controller($controllerName)
    {
-      echo "Generating template controller \n";
+      echo "Generating controller \n";
 
       try {
-         $templateController = $this->handler->getProjectRoot() . "/Orchestra/cli/Controller/Template.php";
-         $controllerTempFile = $this->handler->getProjectRoot() . "/core/Controllers/temp.php";
+         $templateController = $this->handler->getProjectRoot() . "/Orchestra/cli/Templates/Controller.php";
+         $controllerFile = $this->handler->getProjectRoot() . "/app/Controllers/$controllerName.php"; // Ensure .php extension
 
          if (!file_exists($templateController)) {
             echo "Could not find controller template";
@@ -53,15 +31,40 @@ class ControllerHandler
          }
 
          echo "Generating Controller contents \n";
-         if (copy($templateController, $controllerTempFile)) {
+         if (copy($templateController, $controllerFile)) {
             echo "Defining routes \n";
-            $controllerFile = $this->handler->getProjectRoot() . "/core/Controllers/$controllerName";
-            if (rename($controllerTempFile, $controllerFile)) {
-               echo "Action completed successfully \n";
-            }
+            $this->updateIndexFile($controllerName); // Update index.php
+            echo "Action completed successfully \n";
          }
       } catch (Exception $e) {
          echo $e->getMessage();
+      }
+   }
+
+   private function updateIndexFile($controllerName)
+   {
+      $indexFile = $this->handler->getProjectRoot() . "/index.php";
+      $importStatement = "include_once(__DIR__ . '/app/Controllers/$controllerName.php');\n";
+
+      // Read the contents of index.php
+      $indexContent = file_get_contents($indexFile);
+
+      // Check if the import statement already exists
+      if (strpos($indexContent, $importStatement) === false) {
+         // Find the position to insert the new import statement
+         $position = strrpos($indexContent, 'include_once(__DIR__ . \'/app/Controllers/IndexController.php\');');
+
+         if ($position !== false) {
+            // Insert the new import statement after the existing ones
+            $position += strlen('include_once(__DIR__ . \'/app/Controllers/IndexController.php\');') + 1;
+            $indexContent = substr($indexContent, 0, $position) . $importStatement . substr($indexContent, $position);
+
+            // Write the updated content back to index.php
+            file_put_contents($indexFile, $indexContent);
+         } else {
+            // If no existing import statement found, just append it
+            file_put_contents($indexFile, $importStatement, FILE_APPEND);
+         }
       }
    }
 }
