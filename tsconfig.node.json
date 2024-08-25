@@ -1,13 +1,10 @@
 {
+  "extends": "./tsconfig.json",
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-    "skipLibCheck": true,
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noEmit": true
+    "outDir": "./dist",
+    "module": "commonjs",
+    "target": "es6",
+    "strict": true
   },
-  "include": ["vite.config.ts"]
+  "include": ["src/**/*", ]
 }
