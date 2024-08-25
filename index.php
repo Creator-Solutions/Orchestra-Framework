@@ -5,8 +5,7 @@ use Orchestra\http\UrlMatcher;
 
 use Orchestra\routing\Router;
 use Orchestra\cli\command\CLI;
-
-use Orchestra\config\OrchidConfig;
+use Orchestra\env\EnvConfig;
 use Orchestra\logs\Logger;
 
 
@@ -58,9 +57,8 @@ if (php_sapi_name() === 'cli') {
    $arguments = array_slice($argv, 1);
 
    // Initialize Logger and set log directory
-   $orchidConfig = new OrchidConfig();
-   $config = $orchidConfig->parse();
-   Logger::set_log_directory($config['logs']);
+   $env = new EnvConfig();
+   Logger::set_log_directory($env->getenv('LOG_DIR'));
    Logger::create_log_folder();
 
    $cli = new CLI($command, $arguments);
@@ -68,19 +66,20 @@ if (php_sapi_name() === 'cli') {
 } else {
    // Similar initialization for web requests
    $urlMatcher = new UrlMatcher();
-   $orchidConfig = new OrchidConfig();
-   $config = $orchidConfig->parse();
-   // Set and create log directory
-   Logger::set_log_directory($config['logs']);
+
+   $env = new EnvConfig();
+   Logger::set_log_directory($env->getenv('LOG_DIR'));
    Logger::create_log_folder();
+
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
-   
+
    $uri = parse_url($requestUri, PHP_URL_PATH);
    $urlParts = explode('/', trim($uri, '/'));
 
-   $middleware = $urlParts[0] ?? 'default';
-   $endpoint = '/' . ($urlParts[1] ?? '');
+   $middleware = count($urlParts) == 3 ? $urlParts[1] : $urlParts[0] ?? 'default';
+   //$endpoint = '/' . ($urlParts[1] ?? '');
+   $endpoint = $urlMatcher->serializeUrl($urlParts);
 
    $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
    echo $response;

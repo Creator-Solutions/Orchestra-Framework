@@ -14,3 +14,4 @@ include 'Route.php';
  * through the /middleware/endpoint prefixes
  */
 Route::middleware('auth')->get('/test');
+Route::middleware('default')->get('/');

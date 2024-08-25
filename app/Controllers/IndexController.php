@@ -49,15 +49,6 @@ use Exception;
 Router::post('/test', function (Request $req) {
    $val = $req->get('test') ?? "";
 
-   $record = Test::find(1);
-
-   $deleted = Test::delete(1);
-
-   $created = Test::create([
-      'email' => 'test@example.com',
-      'full_name' => 'Test User'
-   ]);
-
    return new JsonResponse(
       [
          'message' => 'success',
