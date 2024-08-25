@@ -7,15 +7,8 @@ use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
-
-use Orchestra\io\FileHandler;
-
-use Orchestra\env\EnvConfig;
 use Orchestra\templates\Template;
-use Orchestra\cache\CacheFactory;
 
-use App\Models\User;
-use Exception;
 
 /**
  * ------------------------
