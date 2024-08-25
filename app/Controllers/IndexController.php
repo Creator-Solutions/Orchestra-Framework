@@ -12,8 +12,7 @@ use Orchestra\io\FileHandler;
 
 use Orchestra\env\EnvConfig;
 use Orchestra\templates\Template;
-
-use Orchestra\config\OrchidConfig;
+use Orchestra\cache\CacheFactory;
 
 use App\Models\User;
 use Exception;
@@ -44,16 +43,13 @@ use Exception;
  * 
  */
 
-
-
 Router::post('/test', function (Request $req) {
    $val = $req->get('test') ?? "";
 
    return new JsonResponse(
       [
          'message' => 'success',
-         'status' => false,
-         'value' => $val
+         'status' => false
       ],
       Response::HTTP_OK
    );
