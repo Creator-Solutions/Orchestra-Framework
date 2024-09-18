@@ -15,7 +15,7 @@
  <img alt="GitHub repo file count (file type)" src="https://img.shields.io/github/directory-file-count/creator-solutions/Orchestra-Framework">
 </p>
 
-<p align="center">Self built practice project that transformed into an<br>ever-growing production used codebase that jumpstarts any project</p>   
+<p align="center">Originally a personal practice project, this framework has evolved into a robust and scalable codebase, designed to accelerate and enhance the development of any project.</p>   
 <br/><br/><br/>
 
 ## About this project
