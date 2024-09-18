@@ -19,9 +19,9 @@
 <br/><br/><br/>
 
 ## About this project
-This framework began as a custom-built solution for an e-commerce store before I had any knowledge of well-known frameworks such as Laravel and Symfony. Over time I began to release that due to the way the framework was built, it solved a lot of issues I had with vanilla PHP scripts. It was then when I realized, the capabilities and possibilities, it could have as a standalone framework. It has become a tool to manage and create various Web-based projects, where it can serve as a Full-Stack codebase in one codebase, or used as a RESTFul API.
+This framework started as a custom-built solution for an e-commerce store before I had experience with popular frameworks like Laravel and Symfony. Over time, I realized that the unique way the framework was structured solved many challenges I encountered with vanilla PHP. It was then that I recognized its potential as a standalone framework, offering robust capabilities for managing and creating various web-based projects. Whether used as a full-stack codebase or solely as a RESTful API, it has grown into a powerful tool for developers.
 
-As of October 2023, the project's main abilities, were only extended to REST API requests. As of July 2024, the frameworks' abilities now extend to popular frontend frameworks such as Angular, React, and Vue, or the framework's in-house pulse templates to build full-scale web applications, allowing developers the freedom of using tech-stacks catered to their needs or developing web applications that are server-side rendered. The possibilities are endless. 
+As of October 2023, the framework was primarily focused on handling REST API requests. However, by July 2024, its capabilities have expanded to support popular frontend frameworks such as Angular, React, and Vue, in addition to its native Pulse templates. This allows developers the flexibility to choose their preferred tech stacks or leverage server-side rendering for building full-scale web applications. The framework's versatility opens up endless possibilities for development.
 <br/><br/>
 
 ## Using the framework
