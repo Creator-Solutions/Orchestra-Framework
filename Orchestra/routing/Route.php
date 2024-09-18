@@ -2,6 +2,7 @@
 
 namespace Orchestra\routing;
 
+use Orchestra\forte\Forte;
 use \InvalidArgumentException;
 
 /**
@@ -38,7 +39,6 @@ class Route
       // Return a new instance of the Route class
       return new self();
    }
-
 
    public function get(string $endpoint = '/')
    {
@@ -81,18 +81,18 @@ class Route
       $parts = explode(':', $endpoint);
       $endpoint = $parts[0];
       $requiredHeader = isset($parts[1]) ? $parts[1] : null;
-  
+
       self::$middlewares[self::$alias][] = [
-          'endpoint' => $endpoint,
-          'header' => $requiredHeader
+         'endpoint' => $endpoint,
+         'header' => $requiredHeader
       ];
-  
+
       // Here you would typically define your route handling logic
       // For demonstration, I'm just returning the endpoint and middleware
       return [
-          'endpoint' => $endpoint,
-          'header' => $requiredHeader,
-          'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
+         'endpoint' => $endpoint,
+         'header' => $requiredHeader,
+         'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
       ];
    }
 
