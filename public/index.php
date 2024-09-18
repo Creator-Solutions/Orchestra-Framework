@@ -9,7 +9,8 @@ use Orchestra\env\EnvConfig;
 use Orchestra\logs\Logger;
 
 
-require_once 'autoload.php';
+require_once '../autoload.php';
+
 
 /**
  * -------------------------
@@ -20,7 +21,7 @@ require_once 'autoload.php';
  * -> COULD HAVE DIRE CONSEQUENCES
  * 
  */
-include_once(__DIR__ . '/Orchestra/routing/api.php');
+include_once dirname(__DIR__) . '/Orchestra/routing/api.php';
 
 /**
  * ----------------------
@@ -29,7 +30,7 @@ include_once(__DIR__ . '/Orchestra/routing/api.php');
  * 
  * Import controllers from this part of the file
  */
-include_once(__DIR__ . '/app/Controllers/IndexController.php');
+include_once dirname(__DIR__) . '/app/Controllers/IndexController.php';
 
 
 

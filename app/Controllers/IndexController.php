@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use app\Models\Test;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
@@ -42,7 +41,7 @@ Router::post('/test', function (Request $req) {
    return new JsonResponse(
       [
          'message' => 'success',
-         'status' => false
+         'status' => true
       ],
       Response::HTTP_OK
    );
