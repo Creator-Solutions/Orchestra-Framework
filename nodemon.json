@@ -1,0 +1,5 @@
+{
+  "watch": ["*.php", "app/**/*.php", "Orchestra/**/*.php"],
+  "ext": "php",
+  "exec": "php -S localhost:8080 -t public"
+}

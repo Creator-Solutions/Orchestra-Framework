@@ -51,25 +51,26 @@ class Template
 
       $templateContent = file_get_contents($this->templatePath);
 
-      // Check for development mode
-      if ($this->isDevelopment()) {
-         // Insert React Refresh script
-         $reactRefreshScript = '<script type="module">
+      // Check for Vite integration only when both APP_ENV is 'development' and APP_INTEGRATION is 'Vite'
+      if ($this->shouldUseVite()) {
+         if ($this->isDevelopment()) {
+            // Development mode: Insert React Refresh, Vite client, and dev entry point
+            $reactRefreshScript = '<script type="module">
                 import RefreshRuntime from "http://localhost:5173/@react-refresh"
                 RefreshRuntime.injectIntoGlobalHook(window)
                 window.$RefreshReg$ = () => {}
                 window.$RefreshSig$ = () => (type) => type
                 window.__vite_plugin_react_preamble_installed__ = true
             </script>';
+            $viteClientScript = '<script type="module" src="http://localhost:5173/@vite/client"></script>';
+            $devEntryScript = '<script type="module" src="http://localhost:5173/index.tsx"></script>';
 
-         // Insert Vite client and dev entry point in the <body>
-         $viteClientScript = '<script type="module" src="http://localhost:5173/@vite/client"></script>';
-         $devEntryScript = '<script type="module" src="http://localhost:5173/index.tsx"></script>';
-         $templateContent = str_replace('</body>', $reactRefreshScript . $viteClientScript . $devEntryScript . '</body>', $templateContent);
-      } else {
-         // Insert the production build script in the <body>
-         $prodScript = '<script type="module" src="/public/assets/index-Bsv4HKnV.js"></script>';
-         $templateContent = str_replace('</body>', $prodScript . '</body>', $templateContent);
+            $templateContent = str_replace('</body>', $reactRefreshScript . $viteClientScript . $devEntryScript . '</body>', $templateContent);
+         } else {
+            // Production mode: Insert the production build script
+            $prodScript = '<script type="module" src="/public/assets/index-Bsv4HKnV.js"></script>';
+            $templateContent = str_replace('</body>', $prodScript . '</body>', $templateContent);
+         }
       }
 
       // Parse template for any variables
@@ -78,12 +79,25 @@ class Template
       echo $templateContent;
    }
 
+   /**
+    * Determine if the application should use Vite integration.
+    * This happens when both APP_ENV is 'development' and APP_INTEGRATION is 'Vite'.
+    */
+   protected function shouldUseVite()
+   {
+      return $this->isDevelopment() && $this->isIntegration();
+   }
+
    protected function isDevelopment()
    {
-      // Adjust this logic based on how you set the environment
       $env = new EnvConfig();
+      return $env->getenv('APP_ENV') === 'development' || getenv('APP_ENV') === 'development';
+   }
 
-      return $env->getenv('APP_ENV') === 'development' || $_ENV['APP_ENV'] === 'development';
+   protected function isIntegration()
+   {
+      $env = new EnvConfig();
+      return $env->getenv('APP_INTEGRATION') === 'Vite' || getenv('APP_INTEGRATION') === 'Vite';
    }
 
    protected function parseTemplate($template, $context)
