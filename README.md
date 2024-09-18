@@ -18,13 +18,13 @@
 <p align="center">Originally a personal practice project, this framework has evolved into a robust and scalable codebase,<br>designed to accelerate and enhance the development of any project.</p>   
 <br/><br/><br/>
 
-## About this project
+# About this project
 This framework started as a custom-built solution for an e-commerce store before I had experience with popular frameworks like Laravel and Symfony. Over time, I realized that the unique way the framework was structured solved many challenges I encountered with vanilla PHP. It was then that I recognized its potential as a standalone framework, offering robust capabilities for managing and creating various web-based projects. Whether used as a full-stack codebase or solely as a RESTful API, it has grown into a powerful tool for developers.
 
 As of October 2023, the framework was primarily focused on handling REST API requests. However, by July 2024, its capabilities have expanded to support popular frontend frameworks such as Angular, React, and Vue, in addition to its native Pulse templates. This allows developers the flexibility to choose their preferred tech stacks or leverage server-side rendering for building full-scale web applications. The framework's versatility opens up endless possibilities for development.
 <br/><br/>
 
-## Using the framework
+# Using the framework
 Due to the nature of the project not being an actual package to install, the project can be cloned as a default project. The following git commands can be used to create a new project and create a new repo without affecting the current base repo of the framework itself:      
 <br/>
 
@@ -83,7 +83,7 @@ git remote -v
 
 <br/>
 
-### Setting up your project to handle requests
+## Setting up your project to handle requests
 
 <p>
  It's no new learning curve that all RESTful API's require some form of setup in order to handle requests sent from the frontend. During the improvements stage of the project, various improvements have been made on how the project is setup to handle these requests.
