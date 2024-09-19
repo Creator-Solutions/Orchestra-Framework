@@ -88,7 +88,7 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
 
 1. The first step is to actually register the middleware with the endpoint. This can be done in the *api.php* file:
    ```php
-   Route::middleware('auth')->get('/test');
+   Route::middleware('auth')->get('/test'); # http://domain.com/auth/test
    ```
    - The middelware, in this case ```auth``` is how we can group the endpoints together, should your project make use of duplicates.
    - The ```get()``` function takes a string parameter. This is the actual api endpoint we will be calling.
