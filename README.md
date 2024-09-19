@@ -25,7 +25,7 @@ As of October 2023, the framework was primarily focused on handling REST API req
 <br/><br/>
 
 # Using the framework
-Due to the nature of the project not being an actual package to install, the project can be cloned as a default project. The following git commands can be used to create a new project and create a new repo without affecting the current base repo of the framework itself:      
+Since this project is designed to serve as a default project rather than a traditional Composer package, it can be cloned directly to start a new project. Follow the steps below to clone the framework, create a new repository, and avoid affecting the base repository of the framework:      
 <br/>
 
 **Step 1: Cloning the project**
