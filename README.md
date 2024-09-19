@@ -86,7 +86,7 @@ git remote -v
 ## Setting up Routes
 Setting up routes should a quick and easy job in order to get the ball rolling in the least amount of time. In Orchestra, there are a few ways routes can be used, observe:
 
-1. The first step is to actually register the middleware with the endpoint. This can be done in the *api.php* file:
+**1. The first step is to actually register the middleware with the endpoint. This can be done in the *api.php* file:**
    ```php
    Route::middleware('auth')->get('/test'); # http://domain.com/auth/test
    ```
@@ -107,4 +107,8 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
    Route::middleware('auth')->get('/test/{id}');
    ```
    - This will create a get request where the endpoint now has an added part. This will require a URL to look like this ```http://domain.com/auth/test/1```, __But this is only for GET requests__
- 
+
+**2. The second step is defining the Router functions:**
+   
+   
+   
