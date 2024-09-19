@@ -95,14 +95,13 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
   
    We can have different variants of this single line to have more control over the endpoints.
 
-
+</br>
    **1.1 We can specify protected endpoints as well:**
    ```php
    Route::middleware('dashboard')->getProtected('/home:Token');
    ```
    - In this case we use the function ```getProtected()```. This function contains more functionality than the normal ```get()```, as we now how to do pre-request calculations. The function takes a string parameter as well with a ```:Value``` afterwards. This value is the header key that is required when the request is sent. 
-
-
+</br>
    **1.2 We can also specify get request with url request parameters:**
    ```php
    Route::middleware('auth')->get('/test/{id}');
