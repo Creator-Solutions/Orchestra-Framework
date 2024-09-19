@@ -83,80 +83,13 @@ git remote -v
 
 <br/>
 
-## Setting up your project to handle requests
+## Setting up Routes
+Setting up routes should a quick and easy job in order to get the ball rolling in the least amount of time. In Orchestra, there are a few ways routes can be used, observe:
 
-<p>
- It's no new learning curve that all RESTful API's require some form of setup in order to handle requests sent from the frontend. During the improvements stage of the project, various improvements have been made on how the project is setup to handle these requests.
-</p>
+1. The first step is to actually register the middleware with the endpoint. This can be done in the *api.php* file:
+   ```php
+   Route::middleware('auth')->get('/test');
+   ```
+    
+   
 
-<br />
-
-During the building phase of the project, the way endpoints were setup was long and stretched. The user had to define a middleware resource, something like
-```auth``` depending on what that resource requires. and after defining the resource, the user would then have to link a specific controller, to a specific callback, which was a function in the controller. This could case some headaches, as the function's name was case sensitive, and you were very limited on what you could name your functions, as the url where the request was sent from, would need to match. In some cases your url would look like this ```https://domain.com/auth/registerUser```, it just doesn't look right. Therefore change were made
-
-
-### Defining the middleware 
-<br />
-<p>
- Previously middleware was defined like this:
-</p>
-
-```php 
-$this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);
-```
-<p>
- but now, we can define them like this :
-</p>
-
-```php 
-Route::middleware('auth')->get('/login');
-```
-
-this new way of adding middlware resource can be done within our **api.php** file.
-<p>
- Lets break some of the code down shall we:
-</p> 
-<br />
-<p>
- This part of the code : 
-</p> 
-
-```php
-Route::middleware('auth')
-```
-
-<p>
- Creates an element in a list, defined by a key based on the middleware resource you have provided. This allows us to create multiple resources, without having to worry about what endpoints are linked to them, as the endpoints will be added to a new list where the middleware resource would be the main key to retrieve them. You can even specify routes that have the same endpoint as long as they have different middleware resources pointing to them.
-</p> 
-<br />
-
-<p>
- And then there is the second half of the code: 
-</p> 
-
-```php
-get('/login');
-```
-
-The **get** method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
-
-### Defining the routes
-
-Linking routes to the controller methods, required the user to create a controller class. The controller class would then have the method that the user defined when creating the middleware resources, i.e. ```php
-some_code...'_callback' =>'login'])```. This feature has now gone under massive reconstruction to improve the quality of handling these resources. 
-
-After finalizing these changes, routes can now be defined by implemented the various methods provided by the ```Router``` class. 
-```php
-Router::post('/login', function (Request $req) {
-   $message = "This is a test request";
-
-   return new JsonResponse(
-      array(
-         'message' => $message
-      ),
-      Response::HTTP_OK
-   );
-});
-```
-
-By passing ```php Request $req``` as a parameter, it also removes the requirement of having global class variables in order to retrieve request paremeters, headers and all sorts of values.
