@@ -126,6 +126,8 @@ Router::post('/test', function (Request $req) {
    );
 });
 ```
-     
+The ``Router`` class contains multiple functions that are provided for developers. Each ``GET``, ``POST``, ``PUT`` request methods have matching ``get``, ``post``, and ``put`` functions, each reference the specific request method that is expected when the endpoint is called.
+
+Another **important** aspect is the endpoint used in the functions. They are case-sensitive. If the endpoint used in the controller, does not match the one registered in the ``api.php`` file, a 404 would be returned by defualt.
    
    
