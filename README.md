@@ -107,8 +107,10 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
    Route::middleware('auth')->get('/test/{id}');
    ```
    - This will create a get request where the endpoint now has an added part. This will require a URL to look like this ```http://domain.com/auth/test/1```, __But this is only for GET requests__
-
+<br></br>
 **2. The second step is defining the Router functions:**
-   
+     *The Router functions are created in your specific controllers. In this case we use the ```auth``` middleware, so our AuthController.php will look like this*
+
+     
    
    
