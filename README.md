@@ -111,7 +111,7 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
 <br></br>
 **2. The second step is defining the Router functions:**
      
-     *The Router functions are created in your specific controllers. In this case we use the ```auth``` middleware, so our AuthController.php will look like this*
+   *The Router functions are created in your specific controllers. In this case we use the ``auth`` middleware, so our AuthController.php will look like this*
 
      
    
