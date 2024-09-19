@@ -129,5 +129,33 @@ Router::post('/test', function (Request $req) {
 The ``Router`` class contains multiple functions that are provided for developers. Each ``GET``, ``POST``, ``PUT`` request methods have matching ``get``, ``post``, and ``put`` functions, each reference the specific request method that is expected when the endpoint is called.
 
 Another **important** aspect is the endpoint used in the functions. They are case-sensitive. If the endpoint used in the controller, does not match the one registered in the ``api.php`` file, a 404 would be returned by defualt.
-   
+
+A get request method might look like this:
+```php
+Router::get('/test/{id}', function (Request $req, $id) {
+   $val = $req->get('test') ?? "";
+
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true
+      ],
+      Response::HTTP_OK
+   );
+});
+```
+The parameter in the callback function is automatically handled by Orchestra, we're just passing a reference ``variable`` if you want to call it that. 
+
+The parameter type that you pass to the endpoint must match the variable reference, example: if you use ``name``, then your Router function will look like this:
+```
+Router::get('/user/{name}', function (Request $req, $name) use ($http, $env) {
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true,
+      ],
+      Response::HTTP_OK
+   );
+});
+```
    
