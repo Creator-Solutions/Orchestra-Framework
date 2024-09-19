@@ -148,7 +148,7 @@ The parameter in the callback function is automatically handled by Orchestra, we
 
 The parameter type that you pass to the endpoint must match the variable reference, example: if you use ``name``, then your Router function will look like this:
 ```php
-Router::get('/user/{name}', function (Request $req, $name) use ($http, $env) {
+Router::get('/user/{name}', function (Request $req, $name){
    return new JsonResponse(
       [
          'message' => 'success',
