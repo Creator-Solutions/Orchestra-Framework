@@ -111,8 +111,21 @@ Setting up routes should a quick and easy job in order to get the ball rolling i
 <br></br>
 ### **2. The second step is defining the Router functions:**
      
-   *The Router functions are created in your specific controllers. In this case we use the ``auth`` middleware, so our AuthController.php will look like this*
+   *The Router functions are created in your specific controllers. In this case we use the ``auth`` middleware, so our AuthController.php will look like this:*
 
+```php
+Router::post('/test', function (Request $req) {
+   $val = $req->get('test') ?? "";
+
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true
+      ],
+      Response::HTTP_OK
+   );
+});
+```
      
    
    
