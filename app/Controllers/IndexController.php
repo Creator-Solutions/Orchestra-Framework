@@ -48,5 +48,6 @@ Router::post('/test', function (Request $req) {
 });
 
 Router::get('/', function () {
+   $content = ['message' => 'This is a message'];
    return (new Template())->view('welcome');
 });

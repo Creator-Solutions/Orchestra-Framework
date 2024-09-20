@@ -5,6 +5,7 @@ namespace Orchestra\cli\command;
 use Orchestra\cli\handlers\ControllerHandler;
 use Orchestra\cli\handlers\MigrationHandler;
 use Orchestra\cli\handlers\ModelHandler;
+use Orchestra\cli\handlers\StartupHandler;
 
 class CLI
 {
@@ -33,6 +34,8 @@ class CLI
          case 'migrate':
             $this->handleMigrateCommand($subCommand);
             break;
+         case 'orchid':
+            $this->handleServe($subCommand);
          default:
             echo "Unknown command: $mainCommand\n";
       }
@@ -66,6 +69,15 @@ class CLI
             break;
          default:
             echo "Unknown migrate command: $subCommand\n";
+      }
+   }
+
+   private function handleServe($subCommand)
+   {
+      switch ($subCommand) {
+         case 'serve':
+            StartupHandler::serveApp();
+            break;
       }
    }
 }
