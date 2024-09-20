@@ -66,7 +66,7 @@ class Template
             $devEntryScript = '<script type="module" src="http://localhost:5173/index.tsx"></script>';
 
             $templateContent = str_replace('</body>', $reactRefreshScript . $viteClientScript . $devEntryScript . '</body>', $templateContent);
-         } else {
+         } else if ($this->isDevelopment()) {
             // Production mode: Insert the production build script
             $prodScript = '<script type="module" src="/public/assets/index-Bsv4HKnV.js"></script>';
             $templateContent = str_replace('</body>', $prodScript . '</body>', $templateContent);

@@ -1,0 +1,16 @@
+#!/opt/homebrew/opt/php@8.2/bin/php
+
+<?php
+
+// Require autoload.php
+require_once __DIR__ . '/../Orchestra/vendor/autoload.php';
+require_once __DIR__ .'/../autoload.php';
+
+// Use CLI class
+use Orchestra\cli\command\CLI;
+
+$command = isset($argv[1]) ? $argv[1] : 'help'; // Default to 'help' if no command is provided
+$arguments = array_slice($argv, 2);
+
+$cli = new CLI($command, $arguments);
+$cli->execute();
