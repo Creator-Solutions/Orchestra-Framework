@@ -228,3 +228,8 @@ Once you have the desired table layout and columns: run the following CLI comman
 ```BASH
 php ./bin/serve migrate:migration up
 ```
+
+if everything was setup correctly, you'll get the following logged to the console:
+```BASH
+Migrated: 20240921104715_create_user_table
+```
