@@ -1,6 +1,5 @@
 <?php
 
-namespace App\Controllers;
 
 use app\Models\User;
 use Orchestra\http\Request;
@@ -43,22 +42,14 @@ Router::post('/test', function (Request $req) {
       'email' => 'string'
    ]);
 
-   if (empty($validated['errors'])) {
-      return new JsonResponse(
-         [
-            'message' => 'success',
-            'status' => true,
-            $validated['validated']
-         ],
-         Response::HTTP_OK
-      );
-   }
+   $user = User::where('age', '=', 12)->select('*');
 
    // If validation passes, return the success response
    return new JsonResponse(
       [
          'message' => 'success',
-         'status' => true
+         'status' => true,
+         'user' => $user,
       ],
       Response::HTTP_OK
    );
