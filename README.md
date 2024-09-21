@@ -237,7 +237,21 @@ Migrated: 20240921104715_create_user_table
 ### Step 2: Create the model
 The model creation functionality allows you to easily define database models that interact with the corresponding database tables. A model in the framework acts as a bridge between the application’s business logic and the database, simplifying tasks like querying, inserting, updating, and deleting records.
 
-To create a model run the command
+To create a model run the command:
 ```bash
 php ./bin/serve make:model User
+```
+
+This will create a User model that you can link to a table
+```php
+class User extends Queryable
+{
+
+   /**
+    * @var string
+    */
+   protected static $table = '';
+
+   protected $props = [];
+}
 ```
