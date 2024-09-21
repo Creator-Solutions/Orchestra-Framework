@@ -190,3 +190,34 @@ The Migration feature in the Orchestra PHP framework enables developers to manag
 ```BASH
 php ./bin/serve make:migration create_user_table
 ```
+
+this will create a new migration file in the ``app`` folder. 
+```php
+<?php
+
+use Orchestra\Sonata\Schema\Schema;
+use Orchestra\Sonata\Scheme\Scheme;
+use Orchestra\interfaces\MigrationInterface;
+
+return new class implements MigrationInterface
+{
+
+   public function build(): void
+   {
+      Schema::create('user', function (Scheme $table) {
+         $table->id();
+         $table->string('username');
+         $table->integer('age');
+         $table->timestamps();
+      });
+   }
+
+   public function destroy()
+   {
+      Schema::destroyIfExists('');
+   }
+};
+```
+The ``build`` function is where you define the desired table layout. Using the migration interface, you can specify columns along with their respective data types or column types. The build function translates PHP class definitions into executable SQL queries, which are automatically handled and run by the framework, eliminating the need to manually write SQL statements for creating or altering tables.
+
+The ``destroy`` function provides a way to safely remove tables from the database. It checks if the table exists before attempting to delete it, ensuring that schema rollbacks or cleanup processes are handled gracefully. This function is useful for reversing migrations or managing table lifecycles.
