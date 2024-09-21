@@ -181,3 +181,4 @@ the key in the array can then rendered or access via interpolation
 ```
 <br></br>
 ## Database Management & Querying
+Sonata is a custom-built ORM (Object-Relational Mapping) system integrated into the Orchestra PHP framework. It serves as a bridge between the application’s object-oriented models and relational database tables, simplifying database interactions by abstracting raw SQL queries.
