@@ -54,11 +54,6 @@ Router::post('/test', function (Request $req) {
       );
    }
 
-   User::create([]);
-   User::find(1);
-   User::delete(1);
-
-
    // If validation passes, return the success response
    return new JsonResponse(
       [
