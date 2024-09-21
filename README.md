@@ -182,3 +182,8 @@ the key in the array can then rendered or access via interpolation
 <br></br>
 ## Database Management & Querying
 Sonata is a custom-built ORM (Object-Relational Mapping) system integrated into the Orchestra PHP framework. It serves as a bridge between the application’s object-oriented models and relational database tables, simplifying database interactions by abstracting raw SQL queries.
+
+#### Step 1: Make a migration
+The Migration feature in the Orchestra PHP framework enables developers to manage and version database schema changes programmatically. It simplifies the process of creating, modifying, and updating database tables over time, ensuring that the database structure stays in sync with application requirements as the project evolves.
+
+
