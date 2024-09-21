@@ -59,7 +59,92 @@ class Request
         }
     }
 
-    public function get_url(){
+    public function get_url()
+    {
         return $_SERVER['REQUEST_URI'];
+    }
+
+    /**
+     * Validates incoming request body.
+     *
+     * @param array $params
+     * @return array|null  // Always returns an array for errors or null on success
+     */
+    public function validation_rules($params = [])
+    {
+        $keyCount = 0;
+        $dataArray = [];
+        $errors = [];
+
+        // Ensure the request is a POST request
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return [
+                'message' => 'Cannot validate body, invalid request method',
+                'status' => false
+            ];
+        }
+
+        // Decode the request body (assumes JSON request body)
+        $this->decodedData = json_decode($this->encodedData, true);
+
+        // Compare keys from the request with the expected params
+        $keyCompare = array_diff_key($params, $this->decodedData);
+
+        // If there are any missing keys, return an error
+        if (!empty($keyCompare)) {
+            return [
+                'message' => 'Missing required parameters: ' . implode(', ', array_keys($keyCompare)),
+                'status' => false
+            ];
+        }
+
+        foreach ($params as $key => $value) {
+            $paramVal = $this->decodedData[$key];
+
+            $rules = explode('|', $value);
+
+            foreach ($rules as $rule) {
+                switch ($rule) {
+                    case 'required':
+                        if (empty($paramVal)) {
+                            $errors[$key][] = "$key is required";
+                        }
+                        break;
+
+                    case 'string':
+                        if (!is_string($paramVal)) {
+                            $errors[$key][] = "$key must be a string";
+                        }
+                        break;
+
+                    case 'number':
+                    case 'integer':
+                        if (!is_numeric($paramVal)) {
+                            $errors[$key][] = "$key must be a number";
+                        }
+                        break;
+
+                    case 'boolean':
+                        if (!is_bool($paramVal)) {
+                            $errors[$key][] = "$key must be a boolean";
+                        }
+                        break;
+                }
+            }
+
+            if (empty($errors[$key])) {
+                $validated[$key] = $paramVal;
+            }
+        }
+
+        return array(
+            'message' => empty($errors) ? "success" : 'failure',
+            'status' => empty($errors),
+            'errors' => $errors,
+            'validated' => $validated
+        );
+
+        // Return null if validation passes (no error)
+        return null;
     }
 }
