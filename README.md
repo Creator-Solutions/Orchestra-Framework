@@ -233,3 +233,11 @@ if everything was setup correctly, you'll get the following logged to the consol
 ```BASH
 Migrated: 20240921104715_create_user_table
 ```
+
+### Step 2: Create the model
+The model creation functionality allows you to easily define database models that interact with the corresponding database tables. A model in the framework acts as a bridge between the application’s business logic and the database, simplifying tasks like querying, inserting, updating, and deleting records.
+
+To create a model run the command
+```bash
+php ./bin/serve make:model User
+```
