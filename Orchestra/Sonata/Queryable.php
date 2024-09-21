@@ -19,15 +19,12 @@ abstract class Queryable
 {
    protected static $table;
    protected static $conn;
-   protected $attributes = [];
+   protected static $attributes = [];
+   protected static $whereClause = '';
+   protected static $data = [];
 
-   public function __construct(array $attributes = [])
-   {
-      $this->initConnection();
-      $this->attributes = $attributes;
-   }
-
-   private function initConnection()
+   // Initialize the database connection statically
+   private static function initConnection()
    {
       if (!self::$conn) {
          // Assume MySQL for the example; change to initPG() for PostgreSQL
@@ -38,7 +35,9 @@ abstract class Queryable
 
    public static function create(array $data)
    {
-      $instance = new static($data); // Create a new instance with provided data
+      self::initConnection(); // Ensure connection is initialized
+      self::$attributes = $data;
+
       $table = static::getTable();
       $columns = implode(', ', array_keys($data));
       $placeholders = implode(', ', array_fill(0, count($data), '?'));
@@ -47,13 +46,13 @@ abstract class Queryable
       $statement = self::$conn->prepare($sql);
       $statement->execute(array_values($data));
 
-      $instance->attributes['id'] = self::$conn->lastInsertId();
-      return $instance;
+      self::$attributes['id'] = self::$conn->lastInsertId();
+      return self::$attributes;
    }
 
    public static function find($id)
    {
-      $instance = new static(); // Create a new instance of the subclass
+      self::initConnection(); // Ensure connection is initialized
       $table = static::getTable();
       $sql = "SELECT * FROM $table WHERE id = ?";
       $statement = self::$conn->prepare($sql);
@@ -61,22 +60,24 @@ abstract class Queryable
       $result = $statement->fetch(PDO::FETCH_ASSOC);
 
       if ($result) {
-         return new static($result); // Return a new instance with the found data
+         self::$attributes = $result;
+         return $result;
       }
 
       return null;
    }
 
-   public function save()
+   public static function save()
    {
+      self::initConnection(); // Ensure connection is initialized
       $table = static::getTable();
-      $id = $this->attributes['id'] ?? null;
+      $id = self::$attributes['id'] ?? null;
 
       if ($id) {
          // Update existing record
          $setClause = [];
          $values = [];
-         foreach ($this->attributes as $column => $value) {
+         foreach (self::$attributes as $column => $value) {
             $setClause[] = "$column = ?";
             $values[] = $value;
          }
@@ -88,13 +89,13 @@ abstract class Queryable
          $statement->execute($values);
       } else {
          // Insert new record
-         static::create($this->attributes);
+         self::create(self::$attributes);
       }
    }
 
    public static function delete($id)
    {
-      $instance = new static(); // Ensure the connection is initialized
+      self::initConnection(); // Ensure connection is initialized
       $table = static::getTable();
 
       $sql = "DELETE FROM $table WHERE id = ?";
@@ -104,14 +105,93 @@ abstract class Queryable
       return $statement->rowCount();
    }
 
+   public static function all()
+   {
+      self::initConnection(); // Ensure connection is initialized
+      $table = static::getTable();
+
+      $sql = "SELECT * FROM $table";
+      return self::executeQuery($sql, []);
+   }
+
+   public static function limit($limit)
+   {
+      self::initConnection(); // Ensure connection is initialized
+      $table = static::getTable();
+
+      $sql = "SELECT * FROM $table LIMIT ?";
+      return self::executeQuery($sql, [$limit]);
+   }
+
+   public static function where($column, $operator, $value)
+   {
+      if (!empty(self::$whereClause)) {
+         self::$whereClause .= ' AND ';
+      }
+      self::$whereClause .= "$column $operator ?";
+      self::$data[] = $value;
+      return new static(); // Allows chaining calls
+   }
+
+   public static function select($columns = ['*'])
+   {
+      self::initConnection(); // Ensure connection is initialized
+
+      // Ensure $columns is an array
+      if (is_string($columns)) {
+         $columns = [$columns]; // Convert string to array
+      }
+
+      $columns = implode(', ', $columns);  // Now implode will work properly
+
+      $sql = "SELECT $columns FROM " . static::getTable();
+      if (!empty(self::$whereClause)) {
+         $sql .= " WHERE " . self::$whereClause;
+      }
+
+      $statement = self::$conn->prepare($sql);
+      $statement->execute(self::$data);
+
+      return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
+
+   public static function selectFirst($columns = ['*'])
+   {
+      self::initConnection(); // Ensure connection is initialized
+      $columns = implode(', ', $columns);
+      $sql = "SELECT $columns FROM " . static::getTable();
+      if (!empty(self::$whereClause)) {
+         $sql .= " WHERE " . self::$whereClause;
+      }
+      $statement = self::$conn->prepare($sql);
+      $statement->execute(self::$data);
+      return $statement->fetch(PDO::FETCH_ASSOC);
+   }
+
+   public static function deleteWhere()
+   {
+      self::initConnection(); // Ensure connection is initialized
+      if (empty(static::$table)) {
+         throw new Exception("Table name not specified.");
+      }
+      if (empty(self::$whereClause)) {
+         throw new Exception("WHERE clause not specified for delete operation.");
+      }
+
+      $sql = "DELETE FROM " . static::getTable() . " WHERE " . self::$whereClause;
+      $statement = self::$conn->prepare($sql);
+      $statement->execute(self::$data);
+      return $statement->rowCount();
+   }
+
    public function __get($key)
    {
-      return $this->attributes[$key] ?? null;
+      return self::$attributes[$key] ?? null;
    }
 
    public function __set($key, $value)
    {
-      $this->attributes[$key] = $value;
+      self::$attributes[$key] = $value;
    }
 
    protected static function getTable()
@@ -121,10 +201,7 @@ abstract class Queryable
 
    protected static function executeQuery($query, $params)
    {
-      if (!self::$conn) {
-         $instance = new static(); // Ensure the connection is initialized
-      }
-
+      self::initConnection(); // Ensure connection is initialized
       $statement = self::$conn->prepare($query);
       $statement->execute($params);
 
