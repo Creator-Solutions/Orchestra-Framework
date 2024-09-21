@@ -15,3 +15,5 @@ include 'Route.php';
  */
 Route::middleware('auth')->get('/test');
 Route::middleware('default')->get('/');
+
+Route::middleware('auth')->get('/dashboard/{id}');

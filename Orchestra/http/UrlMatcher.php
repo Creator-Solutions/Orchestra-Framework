@@ -65,7 +65,7 @@ class UrlMatcher
 
         if (count($url) === 1) {
             return "/" . $url[0];
-        }elseif (count($url) === 2) {
+        } elseif (count($url) === 2) {
             return "/" . $url[1];
         } elseif (count($url) === 3) {
             return "/" . $url[2];

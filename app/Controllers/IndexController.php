@@ -36,20 +36,22 @@ use Orchestra\templates\Template;
  */
 
 Router::post('/test', function (Request $req) {
-   // Run the validation rules
-   $validated = $req->validation_rules([
-      'test' => 'required|string',
-      'email' => 'string'
-   ]);
-
-   $user = User::where('age', '=', 12)->select('*');
 
    // If validation passes, return the success response
    return new JsonResponse(
       [
          'message' => 'success',
          'status' => true,
-         'user' => $user,
+      ],
+      Response::HTTP_OK
+   );
+});
+
+Router::get('/dashboard/{id}', function (Request $req, $id) {
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true,
       ],
       Response::HTTP_OK
    );
