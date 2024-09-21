@@ -218,6 +218,13 @@ return new class implements MigrationInterface
    }
 };
 ```
-The ``build`` function is where you define the desired table layout. Using the migration interface, you can specify columns along with their respective data types or column types. The build function translates PHP class definitions into executable SQL queries, which are automatically handled and run by the framework, eliminating the need to manually write SQL statements for creating or altering tables.
+The ``build`` function is where you define the desired table layout. Using the migration interface, you can specify columns along with their respective data types or column types. The build function translates PHP class definitions into executable SQL queries, which are automatically handled and run by the framework, eliminating the need to manually write SQL statements for creating or altering tables. 
+- The ``id`` field provides an auto incremented primary key.
+- the ``timestamp()`` creates timestamp columns for creation and updates
 
 The ``destroy`` function provides a way to safely remove tables from the database. It checks if the table exists before attempting to delete it, ensuring that schema rollbacks or cleanup processes are handled gracefully. This function is useful for reversing migrations or managing table lifecycles.
+
+Once you have the desired table layout and columns: run the following CLI command
+```BASH
+php ./bin/serve migrate:migration up
+```
