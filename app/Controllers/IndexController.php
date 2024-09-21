@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use app\Models\User;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
@@ -36,8 +37,29 @@ use Orchestra\templates\Template;
  */
 
 Router::post('/test', function (Request $req) {
-   $val = $req->get('test') ?? "";
+   // Run the validation rules
+   $validated = $req->validation_rules([
+      'test' => 'required|string',
+      'email' => 'string'
+   ]);
 
+   if (empty($validated['errors'])) {
+      return new JsonResponse(
+         [
+            'message' => 'success',
+            'status' => true,
+            $validated['validated']
+         ],
+         Response::HTTP_OK
+      );
+   }
+
+   User::create([]);
+   User::find(1);
+   User::delete(1);
+
+
+   // If validation passes, return the success response
    return new JsonResponse(
       [
          'message' => 'success',
@@ -48,6 +70,5 @@ Router::post('/test', function (Request $req) {
 });
 
 Router::get('/', function () {
-   $content = ['message' => 'This is a message'];
    return (new Template())->view('welcome');
 });
