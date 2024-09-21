@@ -160,7 +160,7 @@ Router::get('/user/{name}', function (Request $req, $name){
 ```
    
 Apart from REST APIs, Orchestra offers Server Side Rendering (SSR) with it's native Pulse templates. This allows developers to render HTML views directly from the controller.
-```
+```php
 Router::get('/', function () {
    return (new Template())->view('welcome');
 });
@@ -168,4 +168,14 @@ Router::get('/', function () {
 
 In this example the Route returns a home page. The view names, or the HTML file names, are case-sensitive, and must contain a ``.pulse.php`` extention, otherwise they will be ignored by the system.
 
-One can also pass data to these views that can be dynamically rendered
+One can also pass data to these views that can be dynamically rendered:
+```php
+Router::get('/', function () {
+   $content = ['message' => 'This is a message'];
+   return (new Template())->view('welcome', $content);
+});
+```
+the key in the array can then rendered or access via interpolation
+```html
+ <p> {{ message }}<p>
+```
