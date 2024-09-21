@@ -2,17 +2,10 @@
 
 namespace Orchestra\routing;
 
-use Orchestra\templates\Template;
 use Orchestra\JsonResponse;
-use Orchestra\Response;
-
-use Orchestra\http\UrlMatcher;
 use Orchestra\bandwidth\TokenBucket;
 use Orchestra\bandwidth\Rate;
-use Orchestra\bandwidth\BlockingConsumer;
-use Orchestra\bandwidth\storage\FileStorage;
 use Orchestra\bandwidth\storage\SessionStorage;
-use Orchestra\io\FileHandler;
 
 /**
  * ------------------------------
@@ -26,6 +19,7 @@ use Orchestra\io\FileHandler;
  * will be executed based on the parameters
  * 
  */
+
 class Router
 {
     protected static $routes = [];
@@ -67,13 +61,13 @@ class Router
     // Register a route with a given method, path, and callback
     protected static function registerRoute(string $method, string $path, callable $callback)
     {
-        // Convert the path into a regex pattern and extract parameter names
         $regex = self::convertPathToRegex($path);
         self::$routes[$method][$regex['pattern']] = [
             'callback' => $callback,
             'params' => $regex['params']
         ];
     }
+
 
     protected static function applyRateLimit(string $uri)
     {
@@ -105,7 +99,6 @@ class Router
 
         $middlewares = Route::getEndpointsForMiddleware($middleware);
         foreach ($middlewares as $mw) {
-            // Execute each middleware before handling the request
             $controller = Route::getController($mw);
             if ($controller) {
                 $controllerInstance = new $controller();
@@ -114,7 +107,7 @@ class Router
         }
 
         foreach (self::$routes[$method] as $pattern => $route) {
-            if (preg_match($pattern, $uri, $matches)) {
+            if (preg_match($pattern, '/' . $uri, $matches)) {
                 array_shift($matches);
 
                 $params = [];
@@ -134,7 +127,7 @@ class Router
             }
         }
 
-        echo "404 Not Found";
+        echo "404 Not Found\n";
     }
 
     public static function getRoutes()
