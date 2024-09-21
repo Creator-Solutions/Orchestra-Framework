@@ -255,3 +255,10 @@ class User extends Queryable
    protected $props = [];
 }
 ```
+The User model class inherits from the Queryable class, this allows you to access multiple methods that mimic raw SQL queries. Which can be used like this:
+
+```php
+User::create([]);
+User::find(1);
+User::delete(1);
+```
