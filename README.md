@@ -262,3 +262,8 @@ User::create([]);
 User::find(1);
 User::delete(1);
 ```
+
+we can even create complex queries such as 
+```php
+$user = User::where('age', '=', 12)->select('*');
+```
