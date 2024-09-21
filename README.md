@@ -186,4 +186,7 @@ Sonata is a custom-built ORM (Object-Relational Mapping) system integrated into 
 #### Step 1: Make a migration
 The Migration feature in the Orchestra PHP framework enables developers to manage and version database schema changes programmatically. It simplifies the process of creating, modifying, and updating database tables over time, ensuring that the database structure stays in sync with application requirements as the project evolves.
 
-
+**Simply run the CLI Command**
+```BASH
+php ./bin/serve make:migration create_user_table
+```
