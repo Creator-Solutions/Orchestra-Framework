@@ -23,6 +23,7 @@ class EnvConfig
    {
       $this->handler = new FileHandler();
       $this->rootDir = $this->handler->getProjectRoot();
+      return $this;
    }
 
    /**

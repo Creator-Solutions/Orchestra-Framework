@@ -2,12 +2,15 @@
 
 
 use app\Models\User;
+use Orchestra\cache\FileCache;
+use Orchestra\env\EnvConfig;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
 use Orchestra\Response;
 use Orchestra\routing\Router;
 use Orchestra\templates\Template;
 
+use Orchestra\cache\CacheFactory;
 
 /**
  * ------------------------
@@ -35,27 +38,6 @@ use Orchestra\templates\Template;
  * 
  */
 
-Router::post('/test', function (Request $req) {
-
-   // If validation passes, return the success response
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => true,
-      ],
-      Response::HTTP_OK
-   );
-});
-
-Router::get('/dashboard/{id}', function (Request $req, $id) {
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => true,
-      ],
-      Response::HTTP_OK
-   );
-});
 
 Router::get('/', function () {
    return (new Template())->view('welcome');
