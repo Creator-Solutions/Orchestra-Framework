@@ -2,6 +2,9 @@
 
 namespace Orchestra\cache;
 
+use Orchestra\io\FileHandler;
+use Orchestra\logs\Logger;
+use Orchestra\logs\LogTypes;
 
 class FileCache implements CacheInterface
 {
@@ -10,23 +13,46 @@ class FileCache implements CacheInterface
    public function __construct(string $cacheDir)
    {
       $this->cacheDir = $cacheDir;
+
+      // Check if the directory exists
       if (!is_dir($cacheDir)) {
-         mkdir($cacheDir, 0777, true);
+         // Attempt to create the directory
+         if (mkdir($cacheDir, 0777, true)) {
+            echo "Directory created successfully: $cacheDir";
+         } else {
+            echo "Failed to create directory: $cacheDir";
+         }
+      } else {
+         echo "Directory already exists: $cacheDir";
       }
    }
 
    private function getFilePath(string $key): string
    {
-      return $this->cacheDir . DIRECTORY_SEPARATOR . md5($key) . '.cache';
+      $filePath = (new FileHandler)->getProjectRoot() . $this->cacheDir . DIRECTORY_SEPARATOR . md5($key) . '.cache';
+
+      // Log the file path being accessed
+      error_log("Attempting to write to: $filePath");
+      Logger::write("Attempting to create file: $filePath", LogTypes::INFORMATION);
+
+      return $filePath;
    }
 
    public function set(string $key, $value, int $ttl = 3600): bool
    {
       $filePath = $this->getFilePath($key);
+      echo "Attempting to write to: $filePath\n"; // Debugging line
       $data = [
          'value' => $value,
          'expires' => time() + $ttl
       ];
+
+      // Check if the cache directory is writable
+      if (!is_writable($this->cacheDir)) {
+         echo "Cache directory is not writable: {$this->cacheDir}\n";
+         return false;
+      }
+
       return file_put_contents($filePath, serialize($data)) !== false;
    }
 
