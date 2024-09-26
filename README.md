@@ -267,3 +267,13 @@ we can even create complex queries such as
 ```php
 $user = User::where('age', '=', 12)->select('*');
 ```
+
+## Caching Mechanisms
+The caching mechanism in the Orchestra Framework is designed to enhance application performance by reducing the need for repetitive data retrieval operations. This system employs a file-based caching strategy, which allows for efficient storage and retrieval of frequently accessed data, minimizing database load and response times.
+
+### The Env Properties
+Within the ``.env`` file are 2 properties that can be set for caching, however these are provided from the get-go.
+```ENV
+CACHE_TYPE=file
+CACHE_FOLDER=/var/www/orchestra/cache
+```
