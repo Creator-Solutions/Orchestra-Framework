@@ -300,3 +300,36 @@ If the steps were followed, a file will be created that looks like this ``ee11cb
 ```cache
 a:2:{s:5:"value";a:1:{i:0;a:5:{s:2:"id";i:1;s:8:"username";s:13:"james cameron";s:3:"age";i:12;s:10:"created_at";s:19:"2024-09-21 18:23:23";s:10:"updated_at";s:19:"2024-09-21 18:23:23";}}s:7:"expires";i:1727384728;}
 ```
+
+### Retrieving the cached values:
+Should we want to check if the specific key exists from the cached file, we simply use the ``get()`` function provided by the ``FileCache`` class
+```php
+ $userCache = $cache->get('user');
+```
+this will automatically locate the cache file and process the contents to retrieve the specific key. And if we do a return from an endpoint like this 
+```php
+return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true,
+         'user' => $userCache,
+      ],
+      Response::HTTP_OK
+   );
+```
+we get this JSON returned 
+```JSON
+{
+    "message": "success",
+    "status": true,
+    "user": [
+        {
+            "id": 1,
+            "username": "james cameron",
+            "age": 12,
+            "created_at": "2024-09-21 18:23:23",
+            "updated_at": "2024-09-21 18:23:23"
+        }
+    ]
+}
+```
