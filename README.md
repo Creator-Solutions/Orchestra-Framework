@@ -280,4 +280,18 @@ CACHE_FOLDER=/var/www/orchestra/cache
 - The ``CACHE_TYPE`` for now mainly supports file caching. But in future release will be extended to Memory Caching and Database Caching
 -  The ``CACHE_FOLDER`` is where the cached files are stored within the project. Currently it has been set as the same directory for the log files.
 
-  
+### Step 1: Implenting caching:
+To create a new instance of the FileCache class
+```php 
+$cache = new FileCache();
+```
+
+then simply do the initial DB query using either the RecordBuilder class or Sonotra ORM:
+```php
+$user = User::where('age', '=', 12)->select('*');
+```
+
+and finally cache the result by calling the ``set()`` function
+```php
+$cache->set('user', $user) // returns bool
+```
