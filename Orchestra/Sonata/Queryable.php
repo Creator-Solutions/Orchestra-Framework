@@ -209,6 +209,57 @@ abstract class Queryable
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
 
+   public static function hasMany($related, $foreignKey)
+   {
+      self::initConnection(); // Ensure connection is initialized
+
+      // Get the related model's table name
+      $relatedInstance = new $related();
+      $relatedTable = $relatedInstance->getTable();
+
+      // Build the SQL query for the one-to-many relationship
+      $sql = "SELECT * FROM $relatedTable WHERE $foreignKey = ?";
+
+      $statement = self::$conn->prepare($sql);
+      $statement->execute([self::$attributes['id']]);
+
+      return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
+
+   public static function hasOne($related, $foreignKey)
+   {
+      self::initConnection(); // Ensure connection is initialized
+
+      // Get the related model's table name
+      $relatedInstance = new $related();
+      $relatedTable = $relatedInstance->getTable();
+
+      // Build the SQL query for the one-to-one relationship
+      $sql = "SELECT * FROM $relatedTable WHERE $foreignKey = ? LIMIT 1";
+
+      $statement = self::$conn->prepare($sql);
+      $statement->execute([self::$attributes['id']]);
+
+      return $statement->fetch(PDO::FETCH_ASSOC);
+   }
+
+   public static function belongsTo($related, $foreignKey)
+   {
+      self::initConnection(); // Ensure connection is initialized
+
+      // Get the related model's table name
+      $relatedInstance = new $related();
+      $relatedTable = $relatedInstance->getTable();
+
+      // Build the SQL query for the belongs-to relationship
+      $sql = "SELECT * FROM $relatedTable WHERE id = ?";
+
+      $statement = self::$conn->prepare($sql);
+      $statement->execute([self::$attributes[$foreignKey]]);
+
+      return $statement->fetch(PDO::FETCH_ASSOC);
+   }
+
    public function __get($key)
    {
       return self::$attributes[$key] ?? null;
