@@ -5,25 +5,31 @@ namespace Orchestra\cache;
 use Orchestra\io\FileHandler;
 use Orchestra\logs\Logger;
 use Orchestra\logs\LogTypes;
+use Orchestra\env\EnvConfig;
+
+
 
 class FileCache implements CacheInterface
 {
    private $cacheDir;
+   private $env;
 
-   public function __construct(string $cacheDir)
+   public function __construct()
    {
-      $this->cacheDir = $cacheDir;
+      $this->env = new EnvConfig();
+
+      $this->cacheDir = $this->env->getenv("CACHE_FOLDER");
 
       // Check if the directory exists
-      if (!is_dir($cacheDir)) {
+      if (!is_dir($this->cacheDir)) {
          // Attempt to create the directory
-         if (mkdir($cacheDir, 0777, true)) {
-            echo "Directory created successfully: $cacheDir";
+         if (mkdir($this->cacheDir, 0777, true)) {
+            echo "Directory created successfully: $this->cacheDir";
          } else {
-            echo "Failed to create directory: $cacheDir";
+            echo "Failed to create directory: $this->cacheDir";
          }
       } else {
-         echo "Directory already exists: $cacheDir";
+         Logger::write("Directory already exists: $this->cacheDir", LogTypes::INFORMATION);
       }
    }
 
@@ -33,7 +39,6 @@ class FileCache implements CacheInterface
 
       // Log the file path being accessed
       error_log("Attempting to write to: $filePath");
-      Logger::write("Attempting to create file: $filePath", LogTypes::INFORMATION);
 
       return $filePath;
    }
@@ -41,7 +46,6 @@ class FileCache implements CacheInterface
    public function set(string $key, $value, int $ttl = 3600): bool
    {
       $filePath = $this->getFilePath($key);
-      echo "Attempting to write to: $filePath\n"; // Debugging line
       $data = [
          'value' => $value,
          'expires' => time() + $ttl

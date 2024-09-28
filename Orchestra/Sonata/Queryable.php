@@ -17,7 +17,8 @@ use Exception;
  */
 abstract class Queryable
 {
-   protected static $table;
+   protected $recordBuilder;
+   protected $table;
    protected static $conn;
    protected static $attributes = [];
    protected static $whereClause = '';
@@ -182,6 +183,30 @@ abstract class Queryable
       $statement = self::$conn->prepare($sql);
       $statement->execute(self::$data);
       return $statement->rowCount();
+   }
+
+   public static function belongsToMany($related, $pivotTable, $foreignKey, $relatedKey)
+   {
+      self::initConnection(); // Ensure connection is initialized
+
+      // Get the current model's table name
+      $table = static::getTable();
+
+      // Get the related model's table name
+      $relatedInstance = new $related();
+      $relatedTable = $relatedInstance->getTable();
+
+      // Build the SQL query for the many-to-many relationship
+      $sql = "SELECT $relatedTable.* FROM $relatedTable 
+            INNER JOIN $pivotTable ON $relatedTable.id = $pivotTable.$relatedKey
+            WHERE $pivotTable.$foreignKey = ?";
+
+      $statement = self::$conn->prepare($sql);
+
+      // Assuming the current model's 'id' is set in self::$attributes
+      $statement->execute([self::$attributes['id']]);
+
+      return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
 
    public function __get($key)
