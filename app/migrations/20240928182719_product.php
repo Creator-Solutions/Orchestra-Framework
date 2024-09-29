@@ -14,12 +14,15 @@ return new class implements MigrationInterface
          $table->string('product_name');
          $table->string('SKU');
          $table->integer('price');
+         $table->integer('category');
          $table->timestamps();
+
+         $table->foreign('category')->references('id')->on('product_categories');
       });
    }
 
    public function destroy()
    {
-      Schema::destroyIfExists('');
+      Schema::destroyIfExists('products');
    }
 };

@@ -1,8 +1,10 @@
 <?php
 
 use app\Models\Product;
+use app\Models\ProductCategories;
 use app\Models\User;
 use Orchestra\cache\FileCache;
+use Orchestra\database\RecordBuilder;
 use Orchestra\logs\Logger;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
@@ -38,43 +40,33 @@ use Orchestra\logs\LogTypes;
  */
 
 Router::post('/test', function (Request $req) {
+   $builder = new RecordBuilder();
    // Run the validation rules
    $validated = $req->validation_rules([
       'test' => 'required|string',
       'email' => 'string'
    ]);
 
-  // $product = Product::where('SKU', '=', 'SKU_1011')->selectFirst(['*']);
 
-   $cache = new FileCache();
+   // Fetch the category instance
+   $category = ProductCategories::where('id', '=', 2)->select('*');
 
-   $product = $cache->get('product');
+   // Fetch the user instance
+   $user = User::where('username', '=', 'james cameron')->selectFirst(['*']);
 
-   if ($cache->set('product', $product)) {
-      return new JsonResponse(
-         [
-            'message' => 'success',
-            'status' => true,
-            'user' => $product
-         ],
-         Response::HTTP_OK
-      );
-   }
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => false,
-      ],
-      Response::HTTP_OK
-   );
-});
+   $users = $builder
+      ->from('user')
+      ->where('username', '=', 'james cameron')
+      ->selectFirst();
 
-Router::get('/tenant/{id}/dashboard', function (Request $req, $id) {
+   //$product = $category->drinks();
+
    return new JsonResponse(
       [
          'message' => 'success',
          'status' => true,
-         'id' => $id
+         'user' => $user->get(),
+         'category' => $category,
       ],
       Response::HTTP_OK
    );

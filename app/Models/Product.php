@@ -20,5 +20,11 @@ class Product extends Queryable
     */
    protected static $table = 'products';
 
-   protected $props = [];
+   protected $props = [
+      'id',
+      'product_name',
+      'SKU',
+      'price',
+      'category',
+   ];
 }

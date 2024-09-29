@@ -18,7 +18,7 @@ class Test extends Queryable
    /**
     * @var string
     */
-   protected static $table = '';
+   protected $table = '';
 
    protected $props = [];
 }

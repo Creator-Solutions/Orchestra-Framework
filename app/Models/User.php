@@ -20,5 +20,17 @@ class User extends Queryable
     */
    protected static $table = 'user';
 
-   protected $props = [];
+   protected $props = ['id', 'username', 'age', 'created_at', 'updated_at'];
+
+   public function get()
+   {
+      // Map the properties you want to be part of the JSON response
+      return [
+         'id' => $this->id,
+         'username' => $this->username,
+         'age' => $this->age,
+         'created_at' => $this->created_at,
+         'updated_at' => $this->updated_at,
+      ];
+   }
 }
