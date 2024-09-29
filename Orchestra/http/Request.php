@@ -138,8 +138,6 @@ class Request
         }
 
         return array(
-            'message' => empty($errors) ? "success" : 'failure',
-            'status' => empty($errors),
             'errors' => $errors,
             'validated' => $validated
         );
