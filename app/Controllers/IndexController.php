@@ -39,39 +39,6 @@ use Orchestra\logs\LogTypes;
  * 
  */
 
-Router::post('/test', function (Request $req) {
-   $builder = new RecordBuilder();
-   // Run the validation rules
-   $validated = $req->validation_rules([
-      'test' => 'required|string',
-      'email' => 'string'
-   ]);
-
-
-   // Fetch the category instance
-   $category = ProductCategories::where('id', '=', 2)->select('*');
-
-   // Fetch the user instance
-   $user = User::where('username', '=', 'james cameron')->selectFirst(['*']);
-
-   $users = $builder
-      ->from('user')
-      ->where('username', '=', 'james cameron')
-      ->selectFirst();
-
-   //$product = $category->drinks();
-
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => true,
-         'user' => $user->get(),
-         'category' => $category,
-      ],
-      Response::HTTP_OK
-   );
-});
-
 Router::get('/', function () {
    return (new Template())->view('welcome');
 });

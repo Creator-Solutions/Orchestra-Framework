@@ -22,7 +22,8 @@ abstract class Queryable
    protected static $table;
    protected static $conn;
    protected static $attributes = [];
-   protected static $whereClause = '';
+   protected static $whereClauses = []; // Store where clauses
+   protected static $whereParams = [];
    protected static $data = [];
 
    // Initialize the database connection statically
@@ -149,9 +150,10 @@ abstract class Queryable
 
    public static function where($column, $operator, $value)
    {
-      self::$whereClause = "$column $operator ?";
-      self::$data = [$value]; // Reset data with new value
-      return new static; // Return the current instance for chaining
+      self::$whereClauses[] = "$column $operator :$column";
+      self::$whereParams[":$column"] = $value;
+
+      return new static; // Return the current instance for method chaining
    }
 
    public static function select($columns = ['*'])
@@ -167,7 +169,7 @@ abstract class Queryable
 
       $sql = "SELECT $columns FROM " . static::getTable();
       if (!empty(self::$whereClause)) {
-         $sql .= " WHERE " . self::$whereClause;
+         $sql .= " WHERE " . self::$whereClauses;
       }
 
       Logger::write("Executing Query: $sql", LogTypes::INFORMATION);
@@ -201,15 +203,41 @@ abstract class Queryable
       $columnList = implode(', ', $columns);
       $sql = "SELECT $columnList FROM $table";
 
+      // Add where clauses if they exist
+      if (!empty(self::$whereClauses)) {
+         $sql .= ' WHERE ' . implode(' AND ', self::$whereClauses);
+      }
+
       $statement = self::$conn->prepare($sql);
-      $statement->execute();
 
-      Logger::write("Executing query $sql", LogTypes::INFORMATION);
+      // Bind parameters
+      foreach (self::$whereParams as $key => $value) {
+         $statement->bindValue($key, $value);
+      }
 
-      // Fetch the record as an associative array
-      $statement->setFetchMode(PDO::FETCH_CLASS, static::class); // Fetch as the current model class
+      Logger::write("Executing query: $sql with params: " . json_encode(self::$whereParams), LogTypes::INFORMATION);
 
-      return $statement->fetch(); // Return the first result as an instance of the model
+      try {
+         $statement->execute();
+
+         // Set the fetch mode to return instances of the current model class
+         $statement->setFetchMode(PDO::FETCH_CLASS, static::class);
+
+         // Fetch the first result
+         $result = $statement->fetch();
+
+         if (!$result) {
+            return null; // Return null if no record is found
+         }
+
+         return $result; // Return the first result as an instance of the model
+      } catch (\PDOException $e) {
+         // Handle exception (logging or rethrowing)
+         throw new Exception("Database query error: " . $e->getMessage());
+      } finally {
+         // Clear where clauses for the next call
+         self::clearWhereClauses();
+      }
    }
 
    public static function deleteWhere()
@@ -222,7 +250,7 @@ abstract class Queryable
          throw new Exception("WHERE clause not specified for delete operation.");
       }
 
-      $sql = "DELETE FROM " . static::getTable() . " WHERE " . self::$whereClause;
+      $sql = "DELETE FROM " . static::getTable() . " WHERE " . self::$whereClauses;
       $statement = self::$conn->prepare($sql);
       $statement->execute(self::$data);
       return $statement->rowCount();
@@ -333,10 +361,17 @@ abstract class Queryable
    // Clear the query state
    private static function clearState()
    {
-      self::$whereClause = '';
+      self::$whereClauses = [];
       self::$data = [];
       self::$attributes = [];
    }
+
+   protected static function clearWhereClauses()
+   {
+      self::$whereClauses = [];
+      self::$whereParams = [];
+   }
+
 
    public static function setTable($tableName)
    {
