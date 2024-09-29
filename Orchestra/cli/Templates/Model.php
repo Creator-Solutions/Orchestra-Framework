@@ -21,4 +21,12 @@ class Model extends Queryable
    protected static $table = '';
 
    protected $props = [];
+
+   public function get()
+   {
+      // Map the properties you want to be part of the JSON response
+      return [
+         'id' => $this->id,
+      ];
+   }
 }

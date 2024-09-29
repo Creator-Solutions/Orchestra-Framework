@@ -1,8 +1,10 @@
 <?php
 
 use app\Models\Product;
+use app\Models\ProductCategories;
 use app\Models\User;
 use Orchestra\cache\FileCache;
+use Orchestra\database\RecordBuilder;
 use Orchestra\logs\Logger;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
@@ -36,49 +38,6 @@ use Orchestra\logs\LogTypes;
  * you just provide the logic
  * 
  */
-
-Router::post('/test', function (Request $req) {
-   // Run the validation rules
-   $validated = $req->validation_rules([
-      'test' => 'required|string',
-      'email' => 'string'
-   ]);
-
-  // $product = Product::where('SKU', '=', 'SKU_1011')->selectFirst(['*']);
-
-   $cache = new FileCache();
-
-   $product = $cache->get('product');
-
-   if ($cache->set('product', $product)) {
-      return new JsonResponse(
-         [
-            'message' => 'success',
-            'status' => true,
-            'user' => $product
-         ],
-         Response::HTTP_OK
-      );
-   }
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => false,
-      ],
-      Response::HTTP_OK
-   );
-});
-
-Router::get('/tenant/{id}/dashboard', function (Request $req, $id) {
-   return new JsonResponse(
-      [
-         'message' => 'success',
-         'status' => true,
-         'id' => $id
-      ],
-      Response::HTTP_OK
-   );
-});
 
 Router::get('/', function () {
    return (new Template())->view('welcome');

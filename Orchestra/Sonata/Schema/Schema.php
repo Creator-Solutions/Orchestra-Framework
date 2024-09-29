@@ -25,9 +25,6 @@ class Schema
 {
    protected static ?PDO $pdo = null;
 
-   /**
-    * Initialize the PDO connection if not already done.
-    */
    protected static function initPDO()
    {
       if (self::$pdo === null) {
@@ -42,7 +39,8 @@ class Schema
 
       $scheme = new Scheme();
       $callback($scheme);
-      $columns = $scheme->getColumns();
+      $columns = $scheme->getColumns()['columns'];
+      $foreignKeys = $scheme->getColumns()['foreign_keys'];
 
       // Generate SQL to create table with columns
       $sql = "CREATE TABLE $table (";
@@ -50,6 +48,10 @@ class Schema
       $primaryKey = null;
 
       foreach ($columns as $name => $definition) {
+         // Ensure each column has a valid definition
+         if (!isset($definition['type'])) {
+            throw new \Exception("Unknown column type for '$name'");
+         }
          $columnDefinitions[] = self::getColumnDefinition($name, $definition);
 
          if (isset($definition['primary']) && $definition['primary']) {
@@ -63,17 +65,18 @@ class Schema
          $sql .= ", PRIMARY KEY ($primaryKey)";
       }
 
+      // Add foreign key constraints
+      foreach ($foreignKeys as $foreignKey) {
+         if ($foreignKey['references'] && $foreignKey['on']) {
+            $sql .= ", FOREIGN KEY ({$foreignKey['column']}) REFERENCES {$foreignKey['on']}({$foreignKey['references']})";
+         }
+      }
+
       $sql .= ");";
 
       self::$pdo->exec($sql);
    }
 
-   /**
-    * Drop a table if it exists.
-    * 
-    * @param string $table
-    * @return bool
-    */
    public static function destroyIfExists($table): bool
    {
       self::initPDO();
@@ -83,7 +86,6 @@ class Schema
          $stmt->execute();
          return true;
       } catch (Exception $e) {
-         // Handle exceptions if necessary
          return false;
       }
    }

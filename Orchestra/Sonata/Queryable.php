@@ -5,6 +5,8 @@ namespace Orchestra\Sonata;
 use Orchestra\database\DatabaseHelper;
 use PDO;
 use Exception;
+use Orchestra\logs\Logger;
+use Orchestra\logs\LogTypes;
 
 /**
  * ----------------
@@ -17,21 +19,43 @@ use Exception;
  */
 abstract class Queryable
 {
-   protected $recordBuilder;
-   protected $table;
+   protected static $table;
    protected static $conn;
    protected static $attributes = [];
-   protected static $whereClause = '';
+   protected static $whereClauses = []; // Store where clauses
+   protected static $whereParams = [];
    protected static $data = [];
 
    // Initialize the database connection statically
    private static function initConnection()
    {
       if (!self::$conn) {
-         // Assume MySQL for the example; change to initPG() for PostgreSQL
          DatabaseHelper::init();
          self::$conn = DatabaseHelper::$conn;
       }
+   }
+
+   // Magic method to handle dynamic method calls (for instantiated models)
+   public function __call($method, $arguments)
+   {
+      if (method_exists($this, $method)) {
+         return call_user_func_array([$this, $method], $arguments);
+      }
+
+      throw new Exception("Method {$method} does not exist on this model.");
+   }
+
+
+   // Magic method to handle static method calls
+   public static function __callStatic($method, $arguments)
+   {
+      $instance = new static(); // Create an instance of the called class
+
+      if (method_exists($instance, $method)) {
+         return call_user_func_array([$instance, $method], $arguments);
+      }
+
+      throw new Exception("Method {$method} does not exist on this model.");
    }
 
    public static function create(array $data)
@@ -126,12 +150,10 @@ abstract class Queryable
 
    public static function where($column, $operator, $value)
    {
-      if (!empty(self::$whereClause)) {
-         self::$whereClause .= ' AND ';
-      }
-      self::$whereClause .= "$column $operator ?";
-      self::$data[] = $value;
-      return new static(); // Allows chaining calls
+      self::$whereClauses[] = "$column $operator :$column";
+      self::$whereParams[":$column"] = $value;
+
+      return new static; // Return the current instance for method chaining
    }
 
    public static function select($columns = ['*'])
@@ -147,26 +169,75 @@ abstract class Queryable
 
       $sql = "SELECT $columns FROM " . static::getTable();
       if (!empty(self::$whereClause)) {
-         $sql .= " WHERE " . self::$whereClause;
+         $sql .= " WHERE " . self::$whereClauses;
       }
 
+      Logger::write("Executing Query: $sql", LogTypes::INFORMATION);
       $statement = self::$conn->prepare($sql);
       $statement->execute(self::$data);
 
-      return $statement->fetchAll(PDO::FETCH_ASSOC);
+      $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+
+      // Reset state after execution
+      self::clearState();
+
+      return $result;
    }
+
 
    public static function selectFirst($columns = ['*'])
    {
-      self::initConnection(); // Ensure connection is initialized
-      $columns = implode(', ', $columns);
-      $sql = "SELECT $columns FROM " . static::getTable();
-      if (!empty(self::$whereClause)) {
-         $sql .= " WHERE " . self::$whereClause;
+      self::initConnection();
+
+      $table = static::getTable();
+
+      // Handle special case for selecting all columns
+      if ($columns === '*') {
+         $columns = ['*'];
       }
+
+      if (is_string($columns)) {
+         $columns = [$columns]; // Convert string to array
+      }
+
+      $columnList = implode(', ', $columns);
+      $sql = "SELECT $columnList FROM $table";
+
+      // Add where clauses if they exist
+      if (!empty(self::$whereClauses)) {
+         $sql .= ' WHERE ' . implode(' AND ', self::$whereClauses);
+      }
+
       $statement = self::$conn->prepare($sql);
-      $statement->execute(self::$data);
-      return $statement->fetch(PDO::FETCH_ASSOC);
+
+      // Bind parameters
+      foreach (self::$whereParams as $key => $value) {
+         $statement->bindValue($key, $value);
+      }
+
+      Logger::write("Executing query: $sql with params: " . json_encode(self::$whereParams), LogTypes::INFORMATION);
+
+      try {
+         $statement->execute();
+
+         // Set the fetch mode to return instances of the current model class
+         $statement->setFetchMode(PDO::FETCH_CLASS, static::class);
+
+         // Fetch the first result
+         $result = $statement->fetch();
+
+         if (!$result) {
+            return null; // Return null if no record is found
+         }
+
+         return $result; // Return the first result as an instance of the model
+      } catch (\PDOException $e) {
+         // Handle exception (logging or rethrowing)
+         throw new Exception("Database query error: " . $e->getMessage());
+      } finally {
+         // Clear where clauses for the next call
+         self::clearWhereClauses();
+      }
    }
 
    public static function deleteWhere()
@@ -179,7 +250,7 @@ abstract class Queryable
          throw new Exception("WHERE clause not specified for delete operation.");
       }
 
-      $sql = "DELETE FROM " . static::getTable() . " WHERE " . self::$whereClause;
+      $sql = "DELETE FROM " . static::getTable() . " WHERE " . self::$whereClauses;
       $statement = self::$conn->prepare($sql);
       $statement->execute(self::$data);
       return $statement->rowCount();
@@ -187,7 +258,7 @@ abstract class Queryable
 
    public static function belongsToMany($related, $pivotTable, $foreignKey, $relatedKey)
    {
-      self::initConnection(); // Ensure connection is initialized
+      self::initConnection();
 
       // Get the current model's table name
       $table = static::getTable();
@@ -198,8 +269,8 @@ abstract class Queryable
 
       // Build the SQL query for the many-to-many relationship
       $sql = "SELECT $relatedTable.* FROM $relatedTable 
-            INNER JOIN $pivotTable ON $relatedTable.id = $pivotTable.$relatedKey
-            WHERE $pivotTable.$foreignKey = ?";
+               INNER JOIN $pivotTable ON $relatedTable.id = $pivotTable.$relatedKey
+               WHERE $pivotTable.$foreignKey = ?";
 
       $statement = self::$conn->prepare($sql);
 
@@ -209,17 +280,20 @@ abstract class Queryable
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
 
-   public static function hasMany($related, $foreignKey)
+   // Example hasMany relationship
+   public function hasMany($related, $foreignKey)
    {
-      self::initConnection(); // Ensure connection is initialized
+      self::initConnection();
 
-      // Get the related model's table name
       $relatedInstance = new $related();
       $relatedTable = $relatedInstance->getTable();
 
-      // Build the SQL query for the one-to-many relationship
-      $sql = "SELECT * FROM $relatedTable WHERE $foreignKey = ?";
+      // Ensure 'id' exists in attributes
+      if (!isset(self::$attributes['id'])) {
+         throw new Exception('ID is not set in attributes.');
+      }
 
+      $sql = "SELECT * FROM $relatedTable WHERE $foreignKey = ?";
       $statement = self::$conn->prepare($sql);
       $statement->execute([self::$attributes['id']]);
 
@@ -272,15 +346,35 @@ abstract class Queryable
 
    protected static function getTable()
    {
-      return static::$table;
+      return static::$table; // Access the static table from the child class
    }
 
    protected static function executeQuery($query, $params)
    {
-      self::initConnection(); // Ensure connection is initialized
+      self::initConnection();
       $statement = self::$conn->prepare($query);
       $statement->execute($params);
 
       return $statement->fetchAll(PDO::FETCH_ASSOC);
+   }
+
+   // Clear the query state
+   private static function clearState()
+   {
+      self::$whereClauses = [];
+      self::$data = [];
+      self::$attributes = [];
+   }
+
+   protected static function clearWhereClauses()
+   {
+      self::$whereClauses = [];
+      self::$whereParams = [];
+   }
+
+
+   public static function setTable($tableName)
+   {
+      static::$table = $tableName;
    }
 }
