@@ -6,6 +6,7 @@ use Orchestra\cli\handlers\ControllerHandler;
 use Orchestra\cli\handlers\MigrationHandler;
 use Orchestra\cli\handlers\ModelHandler;
 use Orchestra\cli\handlers\StartupHandler;
+use Orchestra\cli\handlers\TemplateHandler;
 
 class CLI
 {
@@ -49,6 +50,9 @@ class CLI
             break;
          case 'model':
             $this->handler = new ModelHandler($this->arguments[0]);
+            break;
+         case 'component':
+            $this->handler = new TemplateHandler($this->arguments[0], $subCommand);
             break;
          case 'migration':
             $this->handler = new MigrationHandler($this->arguments[0]);

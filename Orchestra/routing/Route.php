@@ -10,138 +10,150 @@ use \InvalidArgumentException;
  * Route Provider
  * --------------------------------------------
  * 
- * Here is where all middleware functionality stays.
- * Assigning middlewares will be handled by internal
- * class functions using setter functions and getters
- * for retrieval purposes when loading middleware 
- * services.
+ * Simplified route handling class with middleware support.
  */
-
 class Route
 {
-   public static $middlewares = [];
+   protected static $middlewares = [];
    protected static $middlewareMap = [];
+   protected static $roles = [];
+
    protected static $alias;
 
+   /**
+    * Define middleware alias for a route.
+    *
+    * @param string $alias
+    * @return self
+    * @throws InvalidArgumentException
+    */
    public static function middleware(string $alias): self
    {
-      if (!is_string($alias)) {
-         throw new InvalidArgumentException('Alias must be of type string');
-      }
-
-      // Initialize the middleware array for the current alias if it doesn't exist
       if (!isset(self::$middlewares[$alias])) {
          self::$middlewares[$alias] = [];
       }
 
       self::$alias = $alias;
-
-      // Return a new instance of the Route class
       return new self();
    }
 
-   public function get(string $endpoint = '/')
+   /**
+    * Define a route for GET requests.
+    *
+    * @param string $endpoint
+    * @return array
+    * @throws InvalidArgumentException
+    */
+   public function get(string $endpoint = '/'): array
    {
-      // Ensure the current middleware alias is set
-      if (!isset(self::$alias)) {
-         throw new InvalidArgumentException('Middleware alias is not set');
-      }
-
-      // Initialize middleware array if it doesn't exist for the current alias
-      if (!isset(self::$middlewares[self::$alias])) {
-         self::$middlewares[self::$alias] = [];
-      }
-
-      // Append the endpoint to the array associated with the current middleware alias
-      self::$middlewares[self::$alias][] = [
-         'endpoint' => $endpoint
-      ];
-
-      // Here you would typically define your route handling logic
-      // For demonstration, I'm just returning the endpoint and middleware
-      return [
-         'endpoint' => $endpoint,
-         'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
-      ];
+      return $this->addEndpoint($endpoint);
    }
 
-   public function getProtected(string $endpoint)
+   public static function hasRoles(array $roles): self
    {
       if (!isset(self::$alias)) {
          throw new InvalidArgumentException('Middleware alias is not set');
       }
 
-      // Initialize middleware array if it doesn't exist for the current alias
-      if (!isset(self::$middlewares[self::$alias])) {
-         self::$middlewares[self::$alias] = [];
+      // Store the roles associated with the alias
+      self::$roles[self::$alias] = $roles;
+
+      return new self();
+   }
+
+   /**
+    * Define a protected route requiring specific headers.
+    *
+    * @param string $endpoint
+    * @return array
+    * @throws InvalidArgumentException
+    */
+   public function getProtected(string $endpoint): array
+   {
+      $parts = explode(':', $endpoint);
+      return $this->addEndpoint($parts[0], $parts[1] ?? null);
+   }
+
+   /**
+    * Add an endpoint to the middleware.
+    *
+    * @param string $endpoint
+    * @param string|null $header
+    * @return array
+    * @throws InvalidArgumentException
+    */
+   protected function addEndpoint(string $endpoint, ?string $header = null): array
+   {
+      if (!isset(self::$alias)) {
+         throw new InvalidArgumentException('Middleware alias is not set');
       }
 
-      // Here you would typically define your route handling logic
-      // For demonstration, I'm just returning the endpoint and middleware
-      $parts = explode(':', $endpoint);
-      $endpoint = $parts[0];
-      $requiredHeader = isset($parts[1]) ? $parts[1] : null;
+      $endpointData = ['endpoint' => $endpoint];
+      if ($header) {
+         $endpointData['header'] = $header;
+      }
 
-      self::$middlewares[self::$alias][] = [
-         'endpoint' => $endpoint,
-         'header' => $requiredHeader
-      ];
+      self::$middlewares[self::$alias][] = $endpointData;
 
-      // Here you would typically define your route handling logic
-      // For demonstration, I'm just returning the endpoint and middleware
       return [
          'endpoint' => $endpoint,
-         'header' => $requiredHeader,
-         'middlewares' => self::$middlewares[self::$alias], // Return middlewares for current alias
+         'header' => $header,
+         'middlewares' => self::$middlewares[self::$alias]
       ];
    }
 
    /**
-    * Get all endpoints linked to a specific middleware key
+    * Get all endpoints associated with a specific middleware.
     *
-    * @param string $middlewareKey The middleware key
-    * @return array The array of endpoints linked to the middleware key
+    * @param string $middlewareKey
+    * @return array
     */
    public static function getEndpointsForMiddleware(string $middlewareKey): array
    {
-      // Check if the middleware key exists in the $middlewares array
-      if (isset(self::$middlewares[$middlewareKey])) {
-         $endpoints = [];
-         foreach (self::$middlewares[$middlewareKey] as $endpointData) {
-            // Check if the endpoint key exists in the current endpoint data
-            if (isset($endpointData['endpoint'])) {
-               $endpoints[] = $endpointData['endpoint'];
-            }
-         }
-         return $endpoints;
-      } else {
-         // Return an empty array if the middleware key is not found
-         return [];
-      }
+      return array_column(self::$middlewares[$middlewareKey] ?? [], 'endpoint');
    }
 
+   /**
+    * Get the roles associated with a middleware.
+    *
+    * @param string $middlewareKey
+    * @return array
+    */
+   public static function getRolesForMiddleware(string $middlewareKey): array
+   {
+      return self::$roles[$middlewareKey] ?? [];
+   }
 
+   /**
+    * Get all defined middlewares.
+    *
+    * @return array
+    */
    public static function getAllMiddlewares(): array
    {
       return self::$middlewares;
    }
 
-
    /**
-    * use function will link a specific middleware point 
-    * provided to the respective controller
+    * Map a middleware to a specific controller.
+    *
+    * @param string $middleware
+    * @param string $controller
+    * @throws InvalidArgumentException
     */
-   public static function use(string $middleware, $controller)
+   public static function use(string $middleware, string $controller)
    {
-      if (!\is_string($middleware) || empty($middleware)) {
-         throw new InvalidArgumentException('"%s": Middleware must be of type string');
+      if (empty($middleware)) {
+         throw new InvalidArgumentException('Middleware must be a non-empty string');
       }
-
       self::$middlewareMap[$middleware] = $controller;
    }
 
    /**
     * Get the controller associated with a middleware.
+    *
+    * @param string $middleware
+    * @return string|null
     */
    public static function getController(string $middleware): ?string
    {

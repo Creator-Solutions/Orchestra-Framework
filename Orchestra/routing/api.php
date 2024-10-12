@@ -13,7 +13,5 @@ include 'Route.php';
  * will be loaded by then RouteProvider and all of them will be accessible
  * through the /middleware/endpoint prefixes
  */
-Route::middleware('auth')->get('/test');
 Route::middleware('default')->get('/');
-
-Route::middleware('auth')->get('/tenant/{id}/dashboard');
+ 
