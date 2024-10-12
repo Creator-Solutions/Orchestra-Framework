@@ -3,6 +3,7 @@
 namespace Orchestra\templates;
 
 use Orchestra\env\EnvConfig;
+use Orchestra\io\FileHandler;
 
 /**
  * --------------------
@@ -23,6 +24,13 @@ use Orchestra\env\EnvConfig;
 class Template
 {
    protected $templatePath;
+   protected $componentPath;
+
+   public function __construct()
+   {
+      $this->templatePath = (new FileHandler())->getProjectRoot() . "/app/resources/views";
+      $this->componentPath = (new FileHandler())->getProjectRoot() . "/app/resources/views/components";
+   }
 
    public function render($template, $data = [])
    {
@@ -44,7 +52,7 @@ class Template
 
    public function view($template, $data = [])
    {
-      $this->templatePath = dirname(__DIR__) . "/../app/resources/views/$template.pulse.php";
+      $this->templatePath = (new FileHandler())->getProjectRoot() . "/app/resources/views/$template.pulse.php";
       if (!file_exists($this->templatePath)) {
          throw new \Exception("Template file not found: $template");
       }
@@ -73,10 +81,27 @@ class Template
          }
       }
 
+      $templateContent = $this->replaceComponents($templateContent);
+
       // Parse template for any variables
       $templateContent = $this->parseTemplate($templateContent, $data);
 
       echo $templateContent;
+   }
+
+   protected function replaceComponents($templateContent)
+   {
+      // Match custom self-closing tags like <Header />, <Footer />, etc.
+      return preg_replace_callback('/<([A-Za-z][\w]*)\s*\/>/', function ($matches) {
+         $componentName = $matches[1]; // Extract component name, e.g., "Header"
+         $componentFile = $this->componentPath . "/$componentName.pulse.php"; // Look for the component file
+
+         if (file_exists($componentFile)) {
+            return file_get_contents($componentFile); // Return the content of the component file
+         } else {
+            throw new \Exception("Component file not found: $componentName");
+         }
+      }, $templateContent);
    }
 
    /**

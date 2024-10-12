@@ -16,6 +16,8 @@ class Route
 {
    protected static $middlewares = [];
    protected static $middlewareMap = [];
+   protected static $roles = [];
+
    protected static $alias;
 
    /**
@@ -45,6 +47,18 @@ class Route
    public function get(string $endpoint = '/'): array
    {
       return $this->addEndpoint($endpoint);
+   }
+
+   public static function hasRoles(array $roles): self
+   {
+      if (!isset(self::$alias)) {
+         throw new InvalidArgumentException('Middleware alias is not set');
+      }
+
+      // Store the roles associated with the alias
+      self::$roles[self::$alias] = $roles;
+
+      return new self();
    }
 
    /**
@@ -97,6 +111,17 @@ class Route
    public static function getEndpointsForMiddleware(string $middlewareKey): array
    {
       return array_column(self::$middlewares[$middlewareKey] ?? [], 'endpoint');
+   }
+
+   /**
+    * Get the roles associated with a middleware.
+    *
+    * @param string $middlewareKey
+    * @return array
+    */
+   public static function getRolesForMiddleware(string $middlewareKey): array
+   {
+      return self::$roles[$middlewareKey] ?? [];
    }
 
    /**
