@@ -2,9 +2,10 @@
 
 namespace Orchestra\Sonata;
 
-use Orchestra\database\DatabaseHelper;
 use PDO;
 use Exception;
+
+use Orchestra\database\DatabaseHelper;
 use Orchestra\logs\Logger;
 use Orchestra\logs\LogTypes;
 
@@ -21,7 +22,7 @@ abstract class Queryable
 {
    protected static $table;
    protected static $conn;
-   protected static $attributes = [];
+   public $attributes = [];
    protected static $whereClauses = []; // Store where clauses
    protected static $whereParams = [];
    protected static $data = [];
@@ -61,8 +62,6 @@ abstract class Queryable
    public static function create(array $data)
    {
       self::initConnection(); // Ensure connection is initialized
-      self::$attributes = $data;
-
       $table = static::getTable();
       $columns = implode(', ', array_keys($data));
       $placeholders = implode(', ', array_fill(0, count($data), '?'));
@@ -71,8 +70,8 @@ abstract class Queryable
       $statement = self::$conn->prepare($sql);
       $statement->execute(array_values($data));
 
-      self::$attributes['id'] = self::$conn->lastInsertId();
-      return self::$attributes;
+      $data['id'] = self::$conn->lastInsertId(); // Assign the new ID to the data array
+      return $data; // Return the newly created attributes
    }
 
    public static function find($id)
@@ -85,28 +84,30 @@ abstract class Queryable
       $result = $statement->fetch(PDO::FETCH_ASSOC);
 
       if ($result) {
-         self::$attributes = $result;
-         return $result;
+         $instance = new static(); // Create an instance of the model
+         $instance->attributes = $result; // Set instance attributes to the result
+         return $instance;
       }
 
       return null;
    }
 
-   public static function save()
+   public function save()
    {
       self::initConnection(); // Ensure connection is initialized
+
       $table = static::getTable();
-      $id = self::$attributes['id'] ?? null;
+      $id = $this->attributes['id'] ?? null;
 
       if ($id) {
          // Update existing record
          $setClause = [];
          $values = [];
-         foreach (self::$attributes as $column => $value) {
+         foreach ($this->attributes as $column => $value) {
             $setClause[] = "$column = ?";
             $values[] = $value;
          }
-         $values[] = $id; // Add the ID to the values array for the WHERE clause
+         $values[] = $id;
          $setClause = implode(', ', $setClause);
 
          $sql = "UPDATE $table SET $setClause WHERE id = ?";
@@ -114,7 +115,8 @@ abstract class Queryable
          $statement->execute($values);
       } else {
          // Insert new record
-         self::create(self::$attributes);
+         $newData = self::create($this->attributes);
+         $this->attributes = $newData; // Update the attributes with the new data
       }
    }
 
@@ -336,12 +338,12 @@ abstract class Queryable
 
    public function __get($key)
    {
-      return self::$attributes[$key] ?? null;
+      return $this->attributes[$key] ?? null;
    }
 
    public function __set($key, $value)
    {
-      self::$attributes[$key] = $value;
+      $this->attributes[$key] = $value;
    }
 
    protected static function getTable()

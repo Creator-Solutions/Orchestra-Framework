@@ -9,7 +9,7 @@ use Orchestra\env\EnvConfig;
 use Orchestra\logs\Logger;
 
 
-require_once '../autoload.php';
+require_once dirname(__DIR__) . '/autoload.php';
 
 
 /**
