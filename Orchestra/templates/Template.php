@@ -89,6 +89,7 @@ class Template
       echo $templateContent;
    }
 
+
    protected function replaceComponents($templateContent)
    {
       // Match custom self-closing tags like <Header />, <Footer />, etc.

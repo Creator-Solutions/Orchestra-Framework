@@ -1,0 +1,7 @@
+RewriteEngine On
+RewriteBase /Orchestra-Framework/
+
+# Redirect to public/index.php if not a file or directory
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ public/index.php [L]

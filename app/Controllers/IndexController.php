@@ -42,3 +42,21 @@ use Orchestra\logs\LogTypes;
 Router::get('/', function () {
    return (new Template())->view('welcome');
 });
+
+Router::get('/test', function () {
+
+   $user = User::find(1);
+
+   if ($user) {
+      $user->age = 14; // Update the age
+      $user->save(); // Save the changes
+
+      return new JsonResponse(
+         [
+            'message' => $user->get(), // Call get() to return the updated user data
+            'status' => true,
+         ],
+         Response::HTTP_OK
+      );
+   }
+});

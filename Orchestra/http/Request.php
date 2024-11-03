@@ -2,6 +2,8 @@
 
 namespace Orchestra\http;
 
+use Orchestra\database\RecordBuilder;
+
 /**
  * Class that handles request data
  * 
@@ -129,6 +131,17 @@ class Request
                             $errors[$key][] = "$key must be a boolean";
                         }
                         break;
+                    case 'date':
+                        if (!strtotime($paramVal)) {
+                            $errors[$key][] = "$key must be a valid date";
+                        }
+                        break;
+                    case strpos($rule, 'exists:') === 0:
+                        list(, $table, $column) = explode(':', $rule . '::') + [null, null];
+                        if (!$this->checkIfExists($table, $column, $paramVal)) {
+                            $errors[$key][] = "$key does not exist in $table.$column";
+                        }
+                        break;
                 }
             }
 
@@ -144,5 +157,14 @@ class Request
 
         // Return null if validation passes (no error)
         return null;
+    }
+
+    // Helper function to check if a record exists in a database table
+    private function checkIfExists($table, $column, $value)
+    {
+        // This example assumes a database query method like `DB::table($table)->where($column, $value)->exists();`
+        // Adjust as needed for your database interaction approach.
+        $builder = new RecordBuilder();
+        return $builder->from($table)->where($column, '=', $value)->selectFirst();
     }
 }
