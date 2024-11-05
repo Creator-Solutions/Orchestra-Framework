@@ -107,16 +107,24 @@ abstract class Queryable
             $setClause[] = "$column = ?";
             $values[] = $value;
          }
-         $values[] = $id;
+         $values[] = $id; // Add ID to the values array for the WHERE clause
          $setClause = implode(', ', $setClause);
 
          $sql = "UPDATE $table SET $setClause WHERE id = ?";
          $statement = self::$conn->prepare($sql);
-         $statement->execute($values);
+
+         // Execute the statement and return the result as true or false
+         return $statement->execute($values);
       } else {
          // Insert new record
          $newData = self::create($this->attributes);
-         $this->attributes = $newData; // Update the attributes with the new data
+
+         if ($newData) {
+            $this->attributes = $newData; // Update the attributes with the new data
+            return true; // Return true on successful insertion
+         } else {
+            return false; // Return false if insertion fails
+         }
       }
    }
 
@@ -170,13 +178,19 @@ abstract class Queryable
       $columns = implode(', ', $columns);  // Now implode will work properly
 
       $sql = "SELECT $columns FROM " . static::getTable();
-      if (!empty(self::$whereClause)) {
-         $sql .= " WHERE " . self::$whereClauses;
+
+      // Check if there are any where clauses and add them to the SQL query
+      if (!empty(self::$whereClauses)) {
+         // Join the where clauses with AND
+         $sql .= " WHERE " . implode(' AND ', self::$whereClauses);
       }
 
       Logger::write("Executing Query: $sql", LogTypes::INFORMATION);
+
       $statement = self::$conn->prepare($sql);
-      $statement->execute(self::$data);
+
+      // Execute the statement with the bound parameters from where clauses
+      $statement->execute(self::$whereParams);
 
       $result = $statement->fetchAll(PDO::FETCH_ASSOC);
 
@@ -365,7 +379,6 @@ abstract class Queryable
    {
       self::$whereClauses = [];
       self::$data = [];
-      self::$attributes = [];
    }
 
    protected static function clearWhereClauses()
