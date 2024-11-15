@@ -51,6 +51,22 @@ class Scheme
       return $this;
    }
 
+   public function text($column_name)
+   {
+      $this->columns[$column_name] = [
+         'type' => 'text'
+      ];
+
+      return $this;
+   }
+
+   public function datetime($column_name)
+   {
+      $this->columns[$column_name] = [
+         'type' => 'datetime',
+      ];
+   }
+
    public function timestamps()
    {
       $this->columns['created_at'] = [
