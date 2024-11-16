@@ -65,6 +65,8 @@ class Scheme
       $this->columns[$column_name] = [
          'type' => 'datetime',
       ];
+
+      return $this;
    }
 
    public function timestamps()
