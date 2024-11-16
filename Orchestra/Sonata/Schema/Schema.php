@@ -50,7 +50,7 @@ class Schema
       foreach ($columns as $name => $definition) {
          // Ensure each column has a valid definition
          if (!isset($definition['type'])) {
-            throw new \Exception("Unknown column type for '$name'");
+            throw new Exception("Unknown column type for '$name'");
          }
          $columnDefinitions[] = self::getColumnDefinition($name, $definition);
 
@@ -109,8 +109,10 @@ class Schema
             break;
          case 'datetime':
             return "$name DATETIME";
+         case "text":
+            return "$name TEXT";
          default:
-            throw new \Exception("Unknown column type: " . $definition['type']);
+            throw new Exception("Unknown column type: " . $definition['type']);
       }
 
       return $sql;
