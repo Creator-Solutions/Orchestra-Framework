@@ -16,6 +16,7 @@ class Request
 {
 
     /**
+     * 
      * Reads Json Data from Request Body
      * @var string
      */
@@ -154,9 +155,6 @@ class Request
             'errors' => $errors,
             'validated' => $validated
         );
-
-        // Return null if validation passes (no error)
-        return null;
     }
 
     // Helper function to check if a record exists in a database table
