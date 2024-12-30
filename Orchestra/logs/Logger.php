@@ -43,7 +43,7 @@ abstract class Logger extends FileHandler
 
    public static function get_log_dir(): string
    {
-      return self::getProjectRoot() . self::$logFile  . 'error.log';
+      return (new FileHandler())->getProjectRoot() . self::$logFile . 'error.log';
    }
 
    /**
@@ -59,7 +59,7 @@ abstract class Logger extends FileHandler
       $formattedLogMessage = "[$timestamp $logtype]: endpoint: $endpoint, Controller: $callingScript, message: $message" . PHP_EOL;
 
       if (!file_put_contents(self::$logFile, $formattedLogMessage, FILE_APPEND)) {
-         throw new \Exception("Unable to write to log file");
+         throw new Exception("Unable to write to log file");
       }
    }
 }

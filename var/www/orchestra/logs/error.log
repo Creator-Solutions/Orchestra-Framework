@@ -1,7 +1,95 @@
-[2024-11-03 15:57:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: SELECT * FROM user WHERE id = ?
-[2024-11-03 15:58:02 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: SELECT * FROM user WHERE id = 1
-[2024-11-03 16:00:51 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: Updating schedule with attributes: {"id":1,"username":"james cameron","age":12,"created_at":"2024-09-21 18:23:23","updated_at":"2024-09-21 18:23:23"}
-[2024-11-03 16:00:51 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: UPDATE user SET id = ?, username = ?, age = ?, created_at = ?, updated_at = ? WHERE id = ?
-[2024-11-03 16:02:57 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: Updating schedule with attributes: {"id":1,"username":"james cameron","age":12,"created_at":"2024-09-21 18:23:23","updated_at":"2024-09-21 18:23:23"}
-[2024-11-03 16:02:57 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: UPDATE user SET id = ?, username = ?, age = ?, created_at = ?, updated_at = ? WHERE id = ?
-[2024-11-03 16:13:48 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/Sonata/Queryable.php, message: 1
+[2024-12-29 18:59:08 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 18:59:08 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 18:59:08 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM users WHERE id = ?
+[2024-12-29 19:04:16 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:04:16 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:04:16 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM users WHERE id = ?
+[2024-12-29 19:05:01 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:05:01 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:05:01 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM users WHERE id = ?
+[2024-12-29 19:05:01 EXCEPTION CAUGHT]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'orchestra.users' doesn't exist in /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php:205
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php(205): PDOStatement->execute(Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php(53): Orchestra\database\RecordBuilder->selectFirst()
+#2 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/app/Controllers/IndexController.php(38): Orchestra\forte\Forte::getAuthUser()
+#3 [internal function]: {closure}(Object(Orchestra\http\Request))
+#4 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/routing/Router.php(118): call_user_func_array(Object(Closure), Array)
+#5 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/public/index.php(87): Orchestra\routing\Router::handle('GET', 'test', 'test', Object(Orchestra\http\Request))
+#6 {main}
+[2024-12-29 19:05:35 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:05:35 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:05:35 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM users WHERE id = ?
+[2024-12-29 19:05:35 EXCEPTION CAUGHT]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'orchestra.users' doesn't exist in /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php:206
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php(206): PDOStatement->execute(Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php(53): Orchestra\database\RecordBuilder->selectFirst()
+#2 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/app/Controllers/IndexController.php(38): Orchestra\forte\Forte::getAuthUser()
+#3 [internal function]: {closure}(Object(Orchestra\http\Request))
+#4 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/routing/Router.php(118): call_user_func_array(Object(Closure), Array)
+#5 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/public/index.php(87): Orchestra\routing\Router::handle('GET', 'test', 'test', Object(Orchestra\http\Request))
+#6 {main}
+[2024-12-29 19:06:51 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:06:51 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:06:51 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM users WHERE id = ?
+[2024-12-29 19:06:51 EXCEPTION CAUGHT]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: PDOException: SQLSTATE[42S02]: Base table or view not found: 1146 Table 'orchestra.users' doesn't exist in /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php:206
+Stack trace:
+#0 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php(206): PDOStatement->execute(Array)
+#1 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php(53): Orchestra\database\RecordBuilder->selectFirst('*')
+#2 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/app/Controllers/IndexController.php(38): Orchestra\forte\Forte::getAuthUser()
+#3 [internal function]: {closure}(Object(Orchestra\http\Request))
+#4 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/routing/Router.php(118): call_user_func_array(Object(Closure), Array)
+#5 /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/public/index.php(87): Orchestra\routing\Router::handle('GET', 'test', 'test', Object(Orchestra\http\Request))
+#6 {main}
+[2024-12-29 19:07:01 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:07:01 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:07:55 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:07:55 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:07:55 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:17:05 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:17:05 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:17:05 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:17:09 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:17:09 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:17:09 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:17:57 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:17:57 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:17:57 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:23:31 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:23:31 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:23:31 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:23:56 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:23:56 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:23:56 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:25:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:25:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:25:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:26:49 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:26:49 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:26:49 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:26:49 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-29 19:28:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-29 19:28:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-29 19:28:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-29 19:28:17 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:02:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-30 18:02:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:02:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-30 18:02:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:32:19 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-30 18:32:19 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:32:19 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-30 18:32:19 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:32:46 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-30 18:32:47 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:32:47 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-30 18:32:47 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:33:07 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: a1b2c3d4e5f6g7h8i9j0
+[2024-12-30 18:33:07 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:33:07 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/forte/Forte.php, message: Array
+[2024-12-30 18:33:07 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:33:53 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:33:53 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:34:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:34:28 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?
+[2024-12-30 18:50:08 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM sessions WHERE session_id = ?
+[2024-12-30 18:50:08 INFO]: endpoint: , Controller: /Applications/XAMPP/xamppfiles/htdocs/Orchestra-Framework/Orchestra/database/RecordBuilder.php, message: SELECT * FROM user WHERE id = ?

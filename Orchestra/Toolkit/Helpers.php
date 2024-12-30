@@ -1,6 +1,9 @@
 <?php
 
+use app\Models\User;
 use Orchestra\env\EnvConfig;
+use Exception;
+use Orchestra\forte\ForteException;
 
 function now($timezone = null)
 {

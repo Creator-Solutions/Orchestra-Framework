@@ -4,8 +4,11 @@ namespace Orchestra\database;
 
 use Orchestra\database\DatabaseHelper;
 
+
 use \PDO;
 use \Exception;
+use Orchestra\logs\LogTypes;
+use Orchestra\logs\Logger;
 
 /**
  * Main Class that handles SQL Calls
@@ -64,7 +67,7 @@ class RecordBuilder extends DatabaseHelper
          $this->whereClause .= ' AND ';
       }
       $this->whereClause .= "$column $operator ?";
-      $this->data[] = $value;
+      $this->data[$column] = $value; // Use associative keys for clarity
       return $this;
    }
 
@@ -167,7 +170,10 @@ class RecordBuilder extends DatabaseHelper
          throw new Exception("Table name not specified.");
       }
 
-      $columns = implode(', ', $columns);
+      if (is_array($columns)) {
+         $columns = implode(', ', $columns);
+      }
+
       $sql = "SELECT $columns FROM $this->table";
       if (!empty($this->whereClause)) {
          $sql .= " WHERE $this->whereClause";
@@ -186,14 +192,17 @@ class RecordBuilder extends DatabaseHelper
          throw new Exception("Table name not specified.");
       }
 
-      $columns = implode(', ', $columns);
+      if (is_array($columns)) {
+         $columns = implode(', ', $columns);
+      }
+
       $sql = "SELECT $columns FROM $this->table";
       if (!empty($this->whereClause)) {
          $sql .= " WHERE $this->whereClause";
       }
-      $statement = $this->pdo->prepare($sql);
-      $statement->execute(array_values($this->data));
 
+      $statement = $this->pdo->prepare($sql);
+      $statement->execute(array_values($this->data)); // Ensure data structure is correct
       $this->clearData();
 
       return $statement->fetch(PDO::FETCH_ASSOC); // Return only the first row

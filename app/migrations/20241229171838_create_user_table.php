@@ -9,10 +9,12 @@ return new class implements MigrationInterface
 
    public function build(): void
    {
-      Schema::create('test_table', function (Scheme $table) {
+      Schema::create('user', function (Scheme $table) {
          $table->id();
-         $table->text('textColumn');
-         $table->datetime('datetimeColumn');
+         $table->string("full_name");
+         $table->string("email");
+         $table->string("password");
+         $table->datetime("last_login_date");
          $table->timestamps();
       });
    }
