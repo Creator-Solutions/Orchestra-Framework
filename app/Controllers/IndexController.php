@@ -1,17 +1,13 @@
 <?php
 
-use app\Models\Product;
-use app\Models\ProductCategories;
-use app\Models\User;
-use Orchestra\cache\FileCache;
-use Orchestra\database\RecordBuilder;
-use Orchestra\logs\Logger;
-use Orchestra\http\Request;
+
 use Orchestra\JsonResponse;
-use Orchestra\Response;
+use Orchestra\forte\Forte;
 use Orchestra\routing\Router;
 use Orchestra\templates\Template;
-use Orchestra\logs\LogTypes;
+use Orchestra\Response;
+use Orchestra\http\Request;
+
 
 /**
  * ------------------------
@@ -38,6 +34,20 @@ use Orchestra\logs\LogTypes;
  * you just provide the logic
  * 
  */
+
+Router::post('/test', function (Request $req) {
+   $test = $req->get("test") ?? "";
+   
+   $user = Forte::getAuthUser();
+
+   return new JsonResponse(
+      [
+         'message' => $user,
+         'status' => true,
+      ],
+      Response::HTTP_OK
+   );
+});
 
 Router::get('/', function () {
    return (new Template())->view('welcome');

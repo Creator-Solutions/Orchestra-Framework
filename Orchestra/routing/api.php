@@ -14,4 +14,4 @@ include 'Route.php';
  * through the /middleware/endpoint prefixes
  */
 Route::middleware('default')->get('/');
-Route::middleware('test')->get('test');
+Route::middleware('test')->get('/test');
