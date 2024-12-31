@@ -37,12 +37,14 @@ use Orchestra\http\Request;
 
 Router::post('/test', function (Request $req) {
    $test = $req->get("test") ?? "";
-   
+
    $user = Forte::getAuthUser();
+   $password = Forte::hash_argon("Solutions12@");
 
    return new JsonResponse(
       [
          'message' => $user,
+         'password' => $password,
          'status' => true,
       ],
       Response::HTTP_OK
