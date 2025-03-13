@@ -18,7 +18,7 @@
     <main>
       <p>To get started, you can:</p>
       <ul>
-        <li>Check out the <a href="https://github.com/creator-solutions/Orchestra-Framework">documentation</a></li>
+        <li>Check out the <a href="https://github.com/creator-solutions/Orchestra-Framework">Repository</a></li>
         <li>Explore the <a href="https://github.com/creator-solutions/Orchestra-Framework">project's source code</a>
         </li>
         <li>Modify the configuration files in <code>.env</code></li>
