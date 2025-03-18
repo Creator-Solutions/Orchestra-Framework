@@ -25,7 +25,7 @@
       </ul>
     </main>
     <footer>
-      <p>&copy; <?php echo date('Y'); ?> Orchestra-Framework. All rights reserved.</p>
+      <p>&copy; <?php echo date('Y'); ?> Orchestra-Framework. All rights reserved. Version 1.0_BETA</p>
     </footer>
   </div>
 </body>
