@@ -22,6 +22,7 @@
         <li>Explore the <a href="https://github.com/creator-solutions/Orchestra-Framework">Source Code</a>
         </li>
         <li>Modify the configuration files in <strong>.env</strong></li>
+        <li>Create routes in<strong>routing/api.php</strong></li>
       </ul>
     </main>
     <footer>
