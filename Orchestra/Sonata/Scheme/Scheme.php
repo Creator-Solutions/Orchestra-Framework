@@ -80,6 +80,16 @@ class Scheme
       return $this;
    }
 
+   public function enum($column_name, array $values)
+   {
+      $this->columns[$column_name] = [
+         'type' => 'string', // Store as VARCHAR instead of ENUM
+         'length' => 255, // Adjust length as needed
+         'enum_values' => $values, // Store allowed values separately
+      ];
+      return $this;
+   }
+
    public function foreign($column_name)
    {
       if (!isset($this->columns[$column_name])) {

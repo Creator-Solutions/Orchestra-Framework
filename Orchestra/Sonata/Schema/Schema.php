@@ -3,7 +3,7 @@
 namespace Orchestra\Sonata\Schema;
 
 use Orchestra\Sonata\Scheme\Scheme;
-use Orchestra\database\DatabaseHelper;
+use Orchestra\database\DB;
 
 use PDO;
 use Exception;
@@ -28,8 +28,8 @@ class Schema
    protected static function initPDO()
    {
       if (self::$pdo === null) {
-         DatabaseHelper::init(); // Initialize the DatabaseHelper connection
-         self::$pdo = DatabaseHelper::$conn; // Set the PDO instance
+         DB::init(); // Initialize the DatabaseHelper connection
+         self::$pdo = DB::$conn; // Set the PDO instance
       }
    }
 

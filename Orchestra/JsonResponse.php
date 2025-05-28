@@ -65,8 +65,6 @@ class JsonResponse extends Response
         } else {
             return $data;
         }
-
-        return json_encode($data);
     }
 
     /**

@@ -41,7 +41,7 @@ class EnvConfig
       $env = [];
       $envFiles = [
          'production' => '.env.production',
-         'local'      => '.env.local',
+         'local'      => '.env',
       ];
 
       // Check for both HTTP and HTTPS environments

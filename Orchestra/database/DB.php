@@ -10,7 +10,7 @@ use Orchestra\env\EnvConfig;
  *  Main class to handle database connection
  * @author Owen
  */
-class DatabaseHelper
+class DB
 {
     public static ?PDO $conn = null;
 

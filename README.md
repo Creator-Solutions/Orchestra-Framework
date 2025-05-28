@@ -15,17 +15,17 @@
  <img alt="GitHub repo file count (file type)" src="https://img.shields.io/github/directory-file-count/creator-solutions/Orchestra-Framework">
 </p>
 
-<p align="center">Self built practice project that transformed into an<br>ever-growing production used codebase that jumpstarts any project</p>   
+<p align="center">Originally a personal practice project, this framework has evolved into a robust and scalable codebase,<br>designed to accelerate and enhance the development of any project.</p>   
 <br/><br/><br/>
 
-## About this project
-This framework initially began as a practice project aimed at delving into the core concepts of renowned frameworks like Symfony and Laravel, which served as inspiration. Over time, as we refined and expanded the codebase, we recognized the opportunity to develop it into a standalone framework for enhanced management and creation of various Web API projects.
+# About this project
+This framework started as a custom-built solution for an e-commerce store before I had experience with popular frameworks like Laravel and Symfony. Over time, I realized that the unique way the framework was structured solved many challenges I encountered with vanilla PHP. It was then that I recognized its potential as a standalone framework, offering robust capabilities for managing and creating various web-based projects. Whether used as a full-stack codebase or solely as a RESTful API, it has grown into a powerful tool for developers.
 
-As of October 2023, the framework supports only POST requests and Web API requests. However, we're excited to announce that moving forward, we'll be extending our support beyond Web API development to encompass RESTful API development as well as server-side rendered templates. This expansion reflects our commitment to catering to a wider range of project needs and ensuring versatility in our framework's capabilities.
+As of October 2023, the framework was primarily focused on handling REST API requests. However, by July 2024, its capabilities have expanded to support popular frontend frameworks such as Angular, React, and Vue, in addition to its native Pulse templates. This allows developers the flexibility to choose their preferred tech stacks or leverage server-side rendering for building full-scale web applications. The framework's versatility opens up endless possibilities for development.
 <br/><br/>
 
-## Using the framework
-Due to the nature of the project not being an actual package to install, the project can be cloned as a default project. The following git commands can be used to create a new project and create a new repo without affecting the current base repo of the framework itself:      
+# Using the framework
+Since this project is designed to serve as a default project rather than a traditional Composer package, it can be cloned directly to start a new project. Follow the steps below to clone the framework, create a new repository, and avoid affecting the base repository of the framework:      
 <br/>
 
 **Step 1: Cloning the project**
@@ -83,80 +83,253 @@ git remote -v
 
 <br/>
 
-### Setting up your project to handle requests
+## Setting up Routes
+Setting up routes should a quick and easy job in order to get the ball rolling in the least amount of time. In Orchestra, there are a few ways routes can be used, observe:
 
-<p>
- It's no new learning curve that all RESTful API's require some form of setup in order to handle requests sent from the frontend. During the improvements stage of the project, various improvements have been made on how the project is setup to handle these requests.
-</p>
+### **1. The first step is to actually register the middleware with the endpoint. This can be done in the *api.php* file:**
+   ```php
+   Route::middleware('auth')->get('/test'); # http://domain.com/auth/test
+   ```
+   - The middelware, in this case ```auth``` is how we can group the endpoints together, should your project make use of duplicates.
+   - The ```get()``` function takes a string parameter. This is the actual api endpoint we will be calling.
+  
+   We can have different variants of this single line to have more control over the endpoints.
+<br></br>
+   1.1 We can specify protected endpoints as well:
+   ```php
+   Route::middleware('dashboard')->getProtected('/home:Token');
+   ```
+   - In this case we use the function ```getProtected()```. This function contains more functionality than the normal ```get()```, as we now how  to do pre-request calculations. The function takes a string parameter as well with a ```:Value``` afterwards. This value is the header key that is required when the request is sent. 
+<br></br>
 
-<br />
+   1.2 We can also specify get request with url request parameters:
+   ```php
+   Route::middleware('auth')->get('/test/{id}');
+   ```
+   - This will create a get request where the endpoint now has an added part. This will require a URL to look like this ```http://domain.com/auth/test/1```, __But this is only for GET requests__
 
-During the building phase of the project, the way endpoints were setup was long and stretched. The user had to define a middleware resource, something like
-```auth``` depending on what that resource requires. and after defining the resource, the user would then have to link a specific controller, to a specific callback, which was a function in the controller. This could case some headaches, as the function's name was case sensitive, and you were very limited on what you could name your functions, as the url where the request was sent from, would need to match. In some cases your url would look like this ```https://domain.com/auth/registerUser```, it just doesn't look right. Therefore change were made
-
-
-### Defining the middleware 
-<br />
-<p>
- Previously middleware was defined like this:
-</p>
-
-```php 
-$this->router->add('/auth', ['_controller' => AuthController::class, '_callback' =>'login']);
-```
-<p>
- but now, we can define them like this :
-</p>
-
-```php 
-Route::middleware('auth')->get('/login');
-```
-
-this new way of adding middlware resource can be done within our **api.php** file.
-<p>
- Lets break some of the code down shall we:
-</p> 
-<br />
-<p>
- This part of the code : 
-</p> 
+<br></br>
+### **2. The second step is defining the Router functions:**
+     
+   *The Router functions are created in your specific controllers. In this case we use the ``auth`` middleware, so our AuthController.php will look like this:*
 
 ```php
-Route::middleware('auth')
-```
-
-<p>
- Creates an element in a list, defined by a key based on the middleware resource you have provided. This allows us to create multiple resources, without having to worry about what endpoints are linked to them, as the endpoints will be added to a new list where the middleware resource would be the main key to retrieve them. You can even specify routes that have the same endpoint as long as they have different middleware resources pointing to them.
-</p> 
-<br />
-
-<p>
- And then there is the second half of the code: 
-</p> 
-
-```php
-get('/login');
-```
-
-The **get** method is what stores the endpoint under the middleware provided. This is all done under the hood for you by the framework without requiring more lines of code to be written.
-
-### Defining the routes
-
-Linking routes to the controller methods, required the user to create a controller class. The controller class would then have the method that the user defined when creating the middleware resources, i.e. ```php
-some_code...'_callback' =>'login'])```. This feature has now gone under massive reconstruction to improve the quality of handling these resources. 
-
-After finalizing these changes, routes can now be defined by implemented the various methods provided by the ```Router``` class. 
-```php
-Router::post('/login', function (Request $req) {
-   $message = "This is a test request";
+Router::post('/test', function (Request $req) {
+   $val = $req->get('test') ?? "";
 
    return new JsonResponse(
-      array(
-         'message' => $message
-      ),
+      [
+         'message' => 'success',
+         'status' => true
+      ],
       Response::HTTP_OK
    );
 });
 ```
+The ``Router`` class contains multiple functions that are provided for developers. Each ``GET``, ``POST``, ``PUT`` request methods have matching ``get``, ``post``, and ``put`` functions, each reference the specific request method that is expected when the endpoint is called.
 
-By passing ```php Request $req``` as a parameter, it also removes the requirement of having global class variables in order to retrieve request paremeters, headers and all sorts of values.
+Another **important** aspect is the endpoint used in the functions. They are case-sensitive. If the endpoint used in the controller, does not match the one registered in the ``api.php`` file, a 404 would be returned by defualt.
+
+A get request method might look like this:
+```php
+Router::get('/test/{id}', function (Request $req, $id) {
+   $val = $req->get('test') ?? "";
+
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true
+      ],
+      Response::HTTP_OK
+   );
+});
+```
+The parameter in the callback function is automatically handled by Orchestra, we're just passing a reference ``variable`` if you want to call it that. 
+
+The parameter name that you pass to the endpoint must match the variable reference, example: if you use ``name``, then your Router function will look like this:
+```php
+Router::get('/user/{name}', function (Request $req, $name){
+   return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true,
+      ],
+      Response::HTTP_OK
+   );
+});
+```
+   
+Apart from REST APIs, Orchestra offers Server Side Rendering (SSR) with it's native Pulse templates. This allows developers to render HTML views directly from the controller.
+```php
+Router::get('/', function () {
+   return (new Template())->view('welcome');
+});
+```
+
+In this example the Route returns a home page. The view names, or the HTML file names, are case-sensitive, and must contain a ``.pulse.php`` extention, otherwise they will be ignored by the system.
+
+One can also pass data to these views that can be dynamically rendered:
+```php
+Router::get('/', function () {
+   $content = ['message' => 'This is a message'];
+   return (new Template())->view('welcome', $content);
+});
+```
+the key in the array can then rendered or access via interpolation
+```html
+ <p> {{ message }}<p>
+```
+<br></br>
+## Database Management & Querying
+Sonata is a custom-built ORM (Object-Relational Mapping) system integrated into the Orchestra PHP framework. It serves as a bridge between the application’s object-oriented models and relational database tables, simplifying database interactions by abstracting raw SQL queries.
+
+### Step 1: Make a migration
+The Migration feature in the Orchestra PHP framework enables developers to manage and version database schema changes programmatically. It simplifies the process of creating, modifying, and updating database tables over time, ensuring that the database structure stays in sync with application requirements as the project evolves.
+
+**Simply run the CLI Command**
+```BASH
+php ./bin/serve make:migration create_user_table
+```
+
+this will create a new migration file in the ``app`` folder. 
+```php
+<?php
+
+use Orchestra\Sonata\Schema\Schema;
+use Orchestra\Sonata\Scheme\Scheme;
+use Orchestra\interfaces\MigrationInterface;
+
+return new class implements MigrationInterface
+{
+
+   public function build(): void
+   {
+      Schema::create('user', function (Scheme $table) {
+         $table->id();
+         $table->string('username');
+         $table->integer('age');
+         $table->timestamps();
+      });
+   }
+
+   public function destroy()
+   {
+      Schema::destroyIfExists('');
+   }
+};
+```
+The ``build`` function is where you define the desired table layout. Using the migration interface, you can specify columns along with their respective data types or column types. The build function translates PHP class definitions into executable SQL queries, which are automatically handled and run by the framework, eliminating the need to manually write SQL statements for creating or altering tables. 
+- The ``id`` field provides an auto incremented primary key.
+- the ``timestamp()`` creates timestamp columns for creation and updates
+
+The ``destroy`` function provides a way to safely remove tables from the database. It checks if the table exists before attempting to delete it, ensuring that schema rollbacks or cleanup processes are handled gracefully. This function is useful for reversing migrations or managing table lifecycles.
+
+Once you have the desired table layout and columns: run the following CLI command
+```BASH
+php ./bin/serve migrate:migration up
+```
+
+if everything was setup correctly, you'll get the following logged to the console:
+```BASH
+Migrated: 20240921104715_create_user_table
+```
+
+### Step 2: Create the model
+The model creation functionality allows you to easily define database models that interact with the corresponding database tables. A model in the framework acts as a bridge between the application’s business logic and the database, simplifying tasks like querying, inserting, updating, and deleting records.
+
+To create a model run the command:
+```bash
+php ./bin/serve make:model User
+```
+
+This will create a User model that you can link to a table
+```php
+class User extends Queryable
+{
+
+   /**
+    * @var string
+    */
+   protected static $table = '';
+
+   protected $props = [];
+}
+```
+The User model class inherits from the Queryable class, this allows you to access multiple methods that mimic raw SQL queries. Which can be used like this:
+
+```php
+User::create([]);
+User::find(1);
+User::delete(1);
+```
+
+we can even create complex queries such as 
+```php
+$user = User::where('age', '=', 12)->select('*');
+```
+
+## Caching Mechanisms
+The caching mechanism in the Orchestra Framework is designed to enhance application performance by reducing the need for repetitive data retrieval operations. This system employs a file-based caching strategy, which allows for efficient storage and retrieval of frequently accessed data, minimizing database load and response times.
+
+### The Env Properties
+Within the ``.env`` file are 2 properties that can be set for caching, however, these are provided from the get-go.
+```ENV
+CACHE_TYPE=file
+CACHE_FOLDER=/var/www/orchestra/cache
+```
+- The ``CACHE_TYPE`` for now mainly supports file caching. But in future release will be extended to Memory Caching and Database Caching
+-  The ``CACHE_FOLDER`` is where the cached files are stored within the project. Currently it has been set as the same directory for the log files.
+
+### Step 1: Implenting caching:
+To create a new instance of the FileCache class
+```php 
+$cache = new FileCache();
+```
+
+then simply do the initial DB query using either the RecordBuilder class or Sonotra ORM:
+```php
+$user = User::where('age', '=', 12)->select('*');
+```
+
+and finally cache the result by calling the ``set()`` function
+```php
+$cache->set('user', $user) // returns bool
+```
+
+If the steps were followed, a file will be created that looks like this ``ee11cbb19052e40b07aac0ca060c23ee.cache``. And contains the content of the query that was done
+```cache
+a:2:{s:5:"value";a:1:{i:0;a:5:{s:2:"id";i:1;s:8:"username";s:13:"james cameron";s:3:"age";i:12;s:10:"created_at";s:19:"2024-09-21 18:23:23";s:10:"updated_at";s:19:"2024-09-21 18:23:23";}}s:7:"expires";i:1727384728;}
+```
+
+### Step 2: Retrieving the cached values:
+Should we want to check if the specific key exists from the cached file, we simply use the ``get()`` function provided by the ``FileCache`` class
+```php
+ $userCache = $cache->get('user');
+```
+this will automatically locate the cache file and process the contents to retrieve the specific key. And if we do a return from an endpoint like this 
+```php
+return new JsonResponse(
+      [
+         'message' => 'success',
+         'status' => true,
+         'user' => $userCache,
+      ],
+      Response::HTTP_OK
+   );
+```
+we get this JSON returned 
+```JSON
+{
+    "message": "success",
+    "status": true,
+    "user": [
+        {
+            "id": 1,
+            "username": "james cameron",
+            "age": 12,
+            "created_at": "2024-09-21 18:23:23",
+            "updated_at": "2024-09-21 18:23:23"
+        }
+    ]
+}
+```

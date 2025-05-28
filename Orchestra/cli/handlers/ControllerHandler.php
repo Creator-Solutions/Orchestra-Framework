@@ -43,28 +43,36 @@ class ControllerHandler
 
    private function updateIndexFile($controllerName)
    {
-      $indexFile = $this->handler->getProjectRoot() . "/index.php";
-      $importStatement = "include_once(__DIR__ . '/app/Controllers/$controllerName.php');\n";
+      $indexFile = $this->handler->getProjectRoot() . "/public/index.php";
 
       // Read the contents of index.php
       $indexContent = file_get_contents($indexFile);
 
-      // Check if the import statement already exists
-      if (strpos($indexContent, $importStatement) === false) {
-         // Find the position to insert the new import statement
-         $position = strrpos($indexContent, 'include_once(__DIR__ . \'/app/Controllers/IndexController.php\');');
+      // Define the import statement for the new controller
+      $importStatement = "include_once dirname(__DIR__) . '/app/Controllers/$controllerName.php';\n";
 
-         if ($position !== false) {
-            // Insert the new import statement after the existing ones
-            $position += strlen('include_once(__DIR__ . \'/app/Controllers/IndexController.php\');') + 1;
-            $indexContent = substr($indexContent, 0, $position) . $importStatement . substr($indexContent, $position);
+      // Check if the import statement already exists to avoid duplicates
+      if (strpos($indexContent, $importStatement) !== false) {
+         echo "Controller already imported.\n";
+         return;
+      }
 
-            // Write the updated content back to index.php
-            file_put_contents($indexFile, $indexContent);
-         } else {
-            // If no existing import statement found, just append it
-            file_put_contents($indexFile, $importStatement, FILE_APPEND);
-         }
+      // Define the placeholder comment to insert new imports after
+      $placeholder = "include_once dirname(__DIR__) . '/app/Controllers/IndexController.php';";
+
+      // Locate the position of the placeholder
+      $position = strpos($indexContent, $placeholder);
+
+      if ($position !== false) {
+         // Insert the new import statement directly below the placeholder
+         $position += strlen($placeholder) + 1; // Move past the placeholder and add a newline
+         $updatedContent = substr($indexContent, 0, $position) . $importStatement . substr($indexContent, $position);
+
+         // Write the updated content back to index.php
+         file_put_contents($indexFile, $updatedContent);
+         echo "Controller import added successfully.\n";
+      } else {
+         echo "Placeholder for Controller Imports not found.\n";
       }
    }
 }

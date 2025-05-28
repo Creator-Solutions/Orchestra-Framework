@@ -62,4 +62,29 @@ abstract class Logger extends FileHandler
          throw new Exception("Unable to write to log file");
       }
    }
+
+   public static function logInfo($message)
+   {
+      self::write($message, LogTypes::INFORMATION);
+   }
+
+   public static function logDebug($message)
+   {
+      self::write($message, LogTypes::DEBUG);
+   }
+
+   public static function logError($message)
+   {
+      self::write($message, LogTypes::INTERNAL_ERROR);
+   }
+
+   public static function logWarning($message)
+   {
+      self::write($message, LogTypes::WARNING);
+   }
+
+   public static function LogException($message)
+   {
+      self::write($message, LogTypes::EXCEPTION);
+   }
 }

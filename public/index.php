@@ -49,6 +49,12 @@ include_once dirname(__DIR__) . '/app/Controllers/IndexController.php';
  * placed in order to maximize functionality and quality
  */
 
+$env = new EnvConfig();
+Logger::set_log_directory(env('LOG_DIR'));
+Logger::create_log_folder();
+
+date_default_timezone_set(env('TIMEZONE'));
+
 if (php_sapi_name() === 'cli') {
    // Remove the script name from the arguments
    array_shift($argv);
@@ -57,33 +63,35 @@ if (php_sapi_name() === 'cli') {
    $command = isset($argv[0]) ? $argv[0] : null;
    $arguments = array_slice($argv, 1);
 
-   // Initialize Logger and set log directory
-   $env = new EnvConfig();
-   Logger::set_log_directory($env->getenv('LOG_DIR'));
-   Logger::create_log_folder();
-
    $cli = new CLI($command, $arguments);
    $cli->execute();  // Use execute instead of configure
 } else {
    // Similar initialization for web requests
    $urlMatcher = new UrlMatcher();
 
-   $env = new EnvConfig();
-   Logger::set_log_directory($env->getenv('LOG_DIR'));
-   Logger::create_log_folder();
-
    $requestUri = $_SERVER['REQUEST_URI'];
    $requestMethod = $_SERVER['REQUEST_METHOD'];
 
-   // Remove the query string if present
    $uri = parse_url($requestUri, PHP_URL_PATH);
-   $uri = trim($uri, '/'); // Remove leading and trailing slashes
+
+   // REMOVE THE SUBDIRECTORY if it exists
+   $basePath = '/ci-cloud';  // update this if you ever change subdirectory name
+   if (strpos($uri, $basePath) === 0) {
+      $uri = substr($uri, strlen($basePath));
+   }
+
+   $uri = trim($uri, '/');
+
+   // Optional: normalize to start with `api/`
+   if (strpos($uri, 'api/') !== 0) {
+      $uri = 'api/' . $uri;
+   }
 
    // Extract the path and middleware
    $urlParts = explode('/', $uri);
-   $middleware = count($urlParts) > 1 ? $urlParts[0] : 'default';
-   $endpoint = implode('/', array_slice($urlParts, count($urlParts) > 1 ? 1 : 0));
+   $middleware = count($urlParts) > 2 ? $urlParts[1] : 'default';
+   $endpoint = implode('/', array_slice($urlParts, count($urlParts) > 1 ? 2 : 0));
 
-   $response = Router::handle($requestMethod, $middleware, $endpoint, new Request);
+   $response = (string) Router::handle($requestMethod, $middleware, $endpoint, new Request);
    echo $response;
 }

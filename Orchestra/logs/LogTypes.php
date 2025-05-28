@@ -21,8 +21,13 @@ namespace Orchestra\logs;
 interface LogTypes
 {
 
-   const INTERNAL_ERROR = "INTERNAL_ERROR";
-   const EXCEPTION = "EXCEPTION CAUGHT";
-   const INFORMATION = "INFO";
-   const WARNING = "WARN";
+   public const INTERNAL_ERROR = "INTERNAL_ERROR";
+   public const EXCEPTION = "EXCEPTION";
+   public const INFORMATION = "INFO";
+   public const WARNING = "WARN";
+   public const DEBUG = "DEBUG";
+
+   public const SQL_EXECUTION = "SQL_SCRIPT";
+   public const FOLDER_MKDIR = "FOLDER_MKDIR";
+   public const PIPELINE = "PIPELINE";
 }
