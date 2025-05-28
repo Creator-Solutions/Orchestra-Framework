@@ -5,7 +5,7 @@ namespace Orchestra\Sonata;
 use PDO;
 use Exception;
 
-use Orchestra\database\DatabaseHelper;
+use Orchestra\database\DB;
 use Orchestra\logs\Logger;
 use Orchestra\logs\LogTypes;
 
@@ -25,14 +25,16 @@ abstract class Queryable
    public $attributes = [];
    protected static $whereClauses = []; // Store where clauses
    protected static $whereParams = [];
+   private static $orderByClause = '';
    protected static $data = [];
+
 
    // Initialize the database connection statically
    private static function initConnection()
    {
       if (!self::$conn) {
-         DatabaseHelper::init();
-         self::$conn = DatabaseHelper::$conn;
+         DB::init();
+         self::$conn = DB::$conn;
       }
    }
 
@@ -71,7 +73,7 @@ abstract class Queryable
       $statement->execute(array_values($data));
 
       $data['id'] = self::$conn->lastInsertId(); // Assign the new ID to the data array
-      return $data; // Return the newly created attributes
+      return (object) $data; // Return the newly created attributes
    }
 
    public static function find($id)
@@ -128,14 +130,45 @@ abstract class Queryable
       }
    }
 
-   public static function delete($id)
+   public static function delete()
    {
       self::initConnection(); // Ensure connection is initialized
       $table = static::getTable();
 
-      $sql = "DELETE FROM $table WHERE id = ?";
+      if (empty(self::$whereClauses)) {
+         throw new Exception("Delete operation requires at least one WHERE condition.");
+      }
+
+      $whereClause = implode(' AND ', self::$whereClauses);
+      $sql = "DELETE FROM $table WHERE $whereClause";
+
       $statement = self::$conn->prepare($sql);
-      $statement->execute([$id]);
+      $statement->execute(self::$whereParams);
+
+      // Reset where clauses and parameters after execution to prevent unintended reuse
+      self::$whereClauses = [];
+      self::$whereParams = [];
+
+      return $statement->rowCount();
+   }
+
+   public static function deleteFromId($column, $id)
+   {
+      self::initConnection(); // Ensure connection is initialized
+      $table = static::getTable();
+
+      if (empty(self::$whereClauses)) {
+         throw new Exception("Delete operation requires at least one WHERE condition.");
+      }
+
+      $sql = "DELETE FROM $table WHERE $column = $id";
+
+      $statement = self::$conn->prepare($sql);
+      $statement->execute();
+
+      // Reset where clauses and parameters after execution to prevent unintended reuse
+      self::$whereClauses = [];
+      self::$whereParams = [];
 
       return $statement->rowCount();
    }
@@ -163,6 +196,28 @@ abstract class Queryable
       self::$whereClauses[] = "$column $operator :$column";
       self::$whereParams[":$column"] = $value;
 
+      return new static; // Return the current instance for method chaining
+   }
+
+   public static function and($column, $operator, $value)
+   {
+      // Append the condition with AND
+      self::$whereClauses[] = "AND $column $operator :$column";
+      self::$whereParams[":$column"] = $value;
+
+      return new static; // Return the current instance for method chaining
+   }
+
+   public static function orderBy($column, $direction = 'ASC')
+   {
+      $direction = strtoupper($direction) === 'DESC' ? 'DESC' : 'ASC';
+      self::$orderByClause = "ORDER BY $column $direction";
+      return new static; // Return the current instance for method chaining
+   }
+
+   public static function max($column)
+   {
+      self::$whereClauses[] = "$column = (SELECT MAX($column) FROM " . static::$table . ")";
       return new static; // Return the current instance for method chaining
    }
 
@@ -196,6 +251,7 @@ abstract class Queryable
 
       // Reset state after execution
       self::clearState();
+      self::clearWhereClauses();
 
       return $result;
    }
@@ -246,7 +302,10 @@ abstract class Queryable
             return null; // Return null if no record is found
          }
 
-         return $result; // Return the first result as an instance of the model
+         self::$whereClauses = [];
+         self::$whereParams = [];
+
+         return (object) $result; // Return the first result as an instance of the model
       } catch (\PDOException $e) {
          // Handle exception (logging or rethrowing)
          throw new Exception("Database query error: " . $e->getMessage());
@@ -254,6 +313,41 @@ abstract class Queryable
          // Clear where clauses for the next call
          self::clearWhereClauses();
       }
+   }
+
+   public static function count($column = '*')
+   {
+      self::initConnection(); // Ensure connection is initialized
+      $table = static::getTable();
+
+      // Validate column name to prevent SQL injection
+      if ($column !== '*' && !preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $column)) {
+         throw new Exception("Invalid column name for count operation");
+      }
+
+      $sql = "SELECT COUNT($column) as count FROM $table";
+
+      // Add WHERE clauses if they exist
+      if (!empty(self::$whereClauses)) {
+         $sql .= ' WHERE ' . implode(' AND ', self::$whereClauses);
+      }
+
+      $statement = self::$conn->prepare($sql);
+
+      // Bind parameters
+      foreach (self::$whereParams as $key => $value) {
+         $statement->bindValue($key, $value);
+      }
+
+      Logger::write("Executing count query: $sql with params: " . json_encode(self::$whereParams), LogTypes::INFORMATION);
+
+      $statement->execute();
+      $result = $statement->fetch(PDO::FETCH_ASSOC);
+
+      // Reset where clauses for the next call
+      self::clearWhereClauses();
+
+      return (int) $result['count'];
    }
 
    public static function deleteWhere()
@@ -272,7 +366,7 @@ abstract class Queryable
       return $statement->rowCount();
    }
 
-   public static function belongsToMany($related, $pivotTable, $foreignKey, $relatedKey)
+   public function belongsToMany($related, $pivotTable, $foreignKey, $relatedKey)
    {
       self::initConnection();
 
@@ -288,10 +382,12 @@ abstract class Queryable
                INNER JOIN $pivotTable ON $relatedTable.id = $pivotTable.$relatedKey
                WHERE $pivotTable.$foreignKey = ?";
 
+      Logger::write($sql, LogTypes::INFORMATION);
+
       $statement = self::$conn->prepare($sql);
 
       // Assuming the current model's 'id' is set in self::$attributes
-      $statement->execute([self::$attributes['id']]);
+      $statement->execute([$this->attributes['id']]);
 
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
@@ -316,7 +412,7 @@ abstract class Queryable
       return $statement->fetchAll(PDO::FETCH_ASSOC);
    }
 
-   public static function hasOne($related, $foreignKey)
+   public function hasOne($related, $foreignKey)
    {
       self::initConnection(); // Ensure connection is initialized
 
@@ -328,12 +424,12 @@ abstract class Queryable
       $sql = "SELECT * FROM $relatedTable WHERE $foreignKey = ? LIMIT 1";
 
       $statement = self::$conn->prepare($sql);
-      $statement->execute([self::$attributes['id']]);
+      $statement->execute([$this->attributes['id']]);
 
       return $statement->fetch(PDO::FETCH_ASSOC);
    }
 
-   public static function belongsTo($related, $foreignKey)
+   public function belongsTo($related, $foreignKey)
    {
       self::initConnection(); // Ensure connection is initialized
 
@@ -350,9 +446,20 @@ abstract class Queryable
       return $statement->fetch(PDO::FETCH_ASSOC);
    }
 
-   public function __get($key)
+   public function __get($keys)
    {
-      return $this->attributes[$key] ?? null;
+      // If the $keys parameter is an array
+      if (is_array($keys)) {
+         $result = [];
+         foreach ($keys as $key) {
+            // Return the value for each key or null if the key does not exist
+            $result[$key] = $this->attributes[$key] ?? null;
+         }
+         return $result;
+      }
+
+      // If the $keys parameter is a single key (not an array)
+      return $this->attributes[$keys] ?? null;
    }
 
    public function __set($key, $value)

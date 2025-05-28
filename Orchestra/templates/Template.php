@@ -52,41 +52,85 @@ class Template
 
    public function view($template, $data = [])
    {
-      $this->templatePath = (new FileHandler())->getProjectRoot() . "/app/resources/views/$template.pulse.php";
-      if (!file_exists($this->templatePath)) {
-         throw new \Exception("Template file not found: $template");
-      }
+      // Start output buffering at the highest level
+      ob_start();
 
-      $templateContent = file_get_contents($this->templatePath);
+      try {
+         $this->templatePath = (new FileHandler())->getProjectRoot() . "/app/resources/views/$template.pulse.php";
 
-      // Check for Vite integration only when both APP_ENV is 'development' and APP_INTEGRATION is 'Vite'
-      if ($this->shouldUseVite()) {
-         if ($this->isDevelopment()) {
-            // Development mode: Insert React Refresh, Vite client, and dev entry point
-            $reactRefreshScript = '<script type="module">
-                import RefreshRuntime from "http://localhost:5173/@react-refresh"
-                RefreshRuntime.injectIntoGlobalHook(window)
-                window.$RefreshReg$ = () => {}
-                window.$RefreshSig$ = () => (type) => type
-                window.__vite_plugin_react_preamble_installed__ = true
-            </script>';
-            $viteClientScript = '<script type="module" src="http://localhost:5173/@vite/client"></script>';
-            $devEntryScript = '<script type="module" src="http://localhost:5173/index.tsx"></script>';
-
-            $templateContent = str_replace('</body>', $reactRefreshScript . $viteClientScript . $devEntryScript . '</body>', $templateContent);
-         } else if ($this->isDevelopment()) {
-            // Production mode: Insert the production build script
-            $prodScript = '<script type="module" src="/public/assets/index-Bsv4HKnV.js"></script>';
-            $templateContent = str_replace('</body>', $prodScript . '</body>', $templateContent);
+         if (!file_exists($this->templatePath)) {
+            throw new \Exception("Template file not found: $template");
          }
+
+         // Read template with strict error checking
+         $templateContent = file_get_contents($this->templatePath);
+         if ($templateContent === false) {
+            throw new \Exception("Failed to read template file: $template");
+         }
+
+         // Remove BOM and trim ALL whitespace
+         $templateContent = preg_replace('/^\x{EF}\x{BB}\x{BF}/u', '', $templateContent);
+         $templateContent = trim($templateContent);
+
+         // Process template
+         if ($this->shouldUseVite()) {
+            $templateContent = $this->isDevelopment()
+               ? $this->injectDevelopmentScripts($templateContent)
+               : $this->injectProductionScripts($templateContent);
+         }
+
+         $templateContent = $this->replaceComponents($templateContent);
+         $templateContent = $this->parseTemplate($templateContent, $data);
+
+         // Clean output
+         echo trim($templateContent);
+
+      } catch (\Exception $e) {
+         ob_end_clean();
+         header('Content-Type: text/plain');
+         die('Error: ' . $e->getMessage());
       }
 
-      $templateContent = $this->replaceComponents($templateContent);
+      // Final cleanup
+      $output = ob_get_clean();
+      $output = preg_replace('/\?>\s+<\?php/', '', $output); // Remove PHP tag whitespace
+      $output = trim($output);
 
-      // Parse template for any variables
-      $templateContent = $this->parseTemplate($templateContent, $data);
+      // Ensure no null bytes
+      $output = str_replace("\0", '', $output);
 
-      echo $templateContent;
+      header('Content-Type: text/html; charset=UTF-8');
+      echo $output;
+      exit; // Prevent any additional output
+   }
+
+   private function injectDevelopmentScripts($templateContent)
+   {
+      $reactRefreshScript = '<script type="module">
+        import RefreshRuntime from "http://localhost:5173/@react-refresh"
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true
+    </script>';
+      $viteClientScript = '<script type="module" src="http://localhost:5173/@vite/client"></script>' . "\n";
+      $devEntryScript = '<script type="module" src="http://localhost:5173/index.tsx"></script>';
+
+      // Ensure we only return the modified template content
+      return str_replace(
+         '</body>',
+         $reactRefreshScript . $viteClientScript . $devEntryScript . "\n" . '</body>',
+         $templateContent
+      );
+   }
+
+   private function injectProductionScripts($templateContent)
+   {
+      // Dynamically get the Vite production build file name (e.g., from an environment variable or manifest file)
+      $viteBuildPath = '/public/assets/index-Bsv4HKnV.js'; // Replace with dynamic logic
+      $prodScript = "<script type=\"module\" src=\"$viteBuildPath\"></script>";
+
+      return str_replace('</body>', $prodScript . '</body>', $templateContent);
    }
 
 

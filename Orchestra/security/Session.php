@@ -5,7 +5,13 @@ namespace Orchestra\security;
 use Orchestra\io\FileHandler;
 use Orchestra\http\Request;
 use Orchestra\JsonResponse;
+use Orchestra\Response;
+use app\Models\Sessions;
 
+use Orchestra\logs\LogTypes;
+use Orchestra\logs\Logger;
+
+use DateTime;
 
 
 /**
@@ -174,8 +180,6 @@ class Session extends JsonResponse
      * -> Implement more checks to cater for invalid data or objects
      * -> Checks if expiration date is also still valid
      * 
-     * @param sessiontoken string
-     * @param userData array
      */
     public function checkSessionStatus(string $sessionToken, array $userData)
     {

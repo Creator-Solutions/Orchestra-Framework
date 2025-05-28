@@ -62,12 +62,15 @@ class Router
     protected static function registerRoute(string $method, string $path, callable $callback)
     {
         $regex = self::convertPathToRegex($path);
-        self::$routes[$method][$regex['pattern']] = [
+
+        // Always use regex pattern
+        $pattern = $regex['pattern'];
+
+        self::$routes[$method][$pattern] = [
             'callback' => $callback,
             'params' => $regex['params']
         ];
     }
-
 
     protected static function applyRateLimit(string $uri)
     {
@@ -97,6 +100,10 @@ class Router
     {
         self::applyRateLimit($uri);
 
+        // Strip query string from URI if present
+        $uriParts = explode('?', $uri, 2);
+        $path = $uriParts[0];
+
         $middlewares = Route::getEndpointsForMiddleware($middleware);
         foreach ($middlewares as $mw) {
             $controller = Route::getController($mw);
@@ -106,32 +113,38 @@ class Router
             }
         }
 
-        foreach (self::$routes[$method] as $pattern => $route) {
-            if (preg_match($pattern, '/' . $uri, $matches)) {
-                array_shift($matches);
-
+        foreach (self::$routes[$method] ?? [] as $pattern => $route) {
+            if (preg_match($pattern, '/' . ltrim($path, '/'), $matches)) {
+                array_shift($matches); // full match
                 $params = [];
                 foreach ($route['params'] as $index => $paramName) {
                     $params[$paramName] = $matches[$index] ?? null;
                 }
 
+                // Combine query parameters too if needed
                 $response = call_user_func_array($route['callback'], array_merge([$request], $params));
-
-                if ($response instanceof JsonResponse) {
-                    $response->send();
-                } elseif (is_string($response)) {
-                    echo $response;
-                }
-
+                self::sendResponse($response);
                 return;
             }
         }
 
-        echo "404 Not Found\n";
+        return "404 Not Found\n";
     }
 
     public static function getRoutes()
     {
         return self::$routes;
+    }
+
+    protected static function sendResponse($response)
+    {
+        if ($response instanceof JsonResponse) {
+            $response->send();
+        } elseif (is_string($response)) {
+            echo $response;
+        } else {
+            // Default fallback
+            echo json_encode($response);
+        }
     }
 }

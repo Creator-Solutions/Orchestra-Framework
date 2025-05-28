@@ -5,20 +5,16 @@ namespace Orchestra\cache;
 use Orchestra\io\FileHandler;
 use Orchestra\logs\Logger;
 use Orchestra\logs\LogTypes;
-use Orchestra\env\EnvConfig;
 
 
 
 class FileCache implements CacheInterface
 {
    private $cacheDir;
-   private $env;
 
    public function __construct()
    {
-      $this->env = new EnvConfig();
-
-      $this->cacheDir = $this->env->getenv("CACHE_FOLDER");
+      $this->cacheDir = rtrim((new FileHandler())->getProjectRoot(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . ltrim(env("CACHE_FOLDER"), DIRECTORY_SEPARATOR);
 
       // Check if the directory exists
       if (!is_dir($this->cacheDir)) {
@@ -35,7 +31,7 @@ class FileCache implements CacheInterface
 
    private function getFilePath(string $key): string
    {
-      $filePath = (new FileHandler)->getProjectRoot() . $this->cacheDir . DIRECTORY_SEPARATOR . md5($key) . '.cache';
+      $filePath = $this->cacheDir . DIRECTORY_SEPARATOR . md5($key) . '.cache';
 
       // Log the file path being accessed
       error_log("Attempting to write to: $filePath");
